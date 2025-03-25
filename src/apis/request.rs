@@ -69,19 +69,6 @@ impl Request {
     }
 
     pub fn with_body_param<T: serde::Serialize>(mut self, param: T) -> Self {
-        /*
-        #[derive(serde::Serialize)]
-            struct Wrapper<'a> {
-            #[serde(borrow)]
-            data: &'a RawValue
-        }
-        self.serialized_body = Some(serde_json::to_string(&param).unwrap());
-
-        let wrapper = Wrapper { data: serde_json::from_str(&x).unwrap() };
-    
-        let out = serde_json::to_string(&wrapper).unwrap();
-        println!("{out}");
-        */
         self.serialized_body = Some(serde_json::to_string(&param).unwrap());
         self
     }
@@ -221,38 +208,25 @@ impl Request {
             req_builder.body(enc.finish())
         } else if let Some(body) = self.serialized_body {
             req_headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
-            let req_len = body.len()-2;
-            req_headers.insert(CONTENT_LENGTH, req_len.into());
-            println!("{:?}", &body[1..body.len()-1]);
-            req_builder.body(body[1..body.len()-1].to_string())
+            req_headers.insert(CONTENT_LENGTH, body.len().into());
+            req_builder.body(body)
         } else {
             req_builder.body(String::new())
         };
         let request = match request_result {
-            Ok(request) => {
-              println!("{:?}", request);
-              request
-            },
-            Err(e) => {
-              println!("{}", "rrttrtrt");
-              return Box::pin(futures::future::err(Error::from(e)))
-            }
+            Ok(request) => request,
+            Err(e) => return Box::pin(futures::future::err(Error::from(e)))
         };
+
         let no_return_type = self.no_return_type;
         Box::pin(conf.client
             .request(request)
-            .map_err(|e| { 
-               println!("{}", "fggfgfgg");
-               Error::from(e)
-             } )
+            .map_err(|e| Error::from(e))
             .and_then(move |response| {
-                println!("{}", "qwqwqwqw");
                 let status = response.status();
                 if !status.is_success() {
-                    println!("{:?}", status);
                     futures::future::err::<U, Error>(Error::from((status, response.into_body()))).boxed()
                 } else if no_return_type {
-                    println!("{}", 2);
                     // This is a hack; if there's no_ret_type, U is (), but serde_json gives an
                     // error when deserializing "" into (), so deserialize 'null' into it
                     // instead.
@@ -261,7 +235,6 @@ impl Request {
                     // need to impl default for all models.
                     futures::future::ok::<U, Error>(serde_json::from_str("null").expect("serde null value")).boxed()
                 } else {
-                    println!("{}", 3);
                     let collect = response.into_body().collect().map_err(Error::from);
                     collect.map(|collected| {
                         collected.and_then(|collected| {

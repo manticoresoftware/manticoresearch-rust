@@ -22,7 +22,6 @@ use crate::models;
 use super::{Error, configuration};
 use super::request as __internal_request;
 
-#[derive(Debug)]
 pub struct UtilsApiClient<C: Connect>
     where C: Clone + std::marker::Send + Sync + 'static {
     configuration: Arc<configuration::Configuration<C>>,
@@ -52,6 +51,7 @@ impl<C: Connect>UtilsApi for UtilsApiClient<C>
             req = req.with_query_param("raw_response".to_string(), query_value);
         }
         req = req.with_body_param(body);
+
         req.execute(self.configuration.borrow())
     }
 

@@ -14,7 +14,6 @@ use hyper_util::client::legacy::connect::Connect;
 use hyper_util::client::legacy::connect::HttpConnector;
 use hyper_util::rt::TokioExecutor;
 
-#[derive(Debug)]
 pub struct Configuration<C: Connect = HttpConnector>
     where C: Clone + std::marker::Send + Sync + 'static {
     pub base_path: String,
@@ -28,7 +27,6 @@ pub struct Configuration<C: Connect = HttpConnector>
 
 pub type BasicAuth = (String, Option<String>);
 
-#[derive(Debug)]
 pub struct ApiKey {
     pub prefix: Option<String>,
     pub key: String,
@@ -44,7 +42,7 @@ impl Configuration<HttpConnector> {
     /// # Example
     ///
     /// ```
-    /// use manticoresearch::apis::configuration::Configuration;
+    /// # use ::apis::configuration::Configuration;
     /// let api_config = Configuration {
     ///   basic_auth: Some(("user".into(), None)),
     ///   ..Configuration::new()
@@ -63,8 +61,8 @@ impl<C: Connect> Configuration<C>
     /// # Example
     ///
     /// ```
-    /// use core::time::Duration;
-    /// use manticoresearch::apis::configuration::Configuration;
+    /// # use core::time::Duration;
+    /// # use ::apis::configuration::Configuration;
     /// use hyper_util::client::legacy::Client;
     /// use hyper_util::rt::TokioExecutor;
     ///
