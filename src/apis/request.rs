@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::pin::Pin;
 
-use fancy_regex::Regex;
 use futures;
 use futures::Future;
 use futures::future::*;
@@ -208,43 +207,21 @@ impl Request {
             }
             req_builder.body(enc.finish())
         } else if let Some(body) = self.serialized_body {
-            let req_len;
-            let mut req_body;
-            let content_type;
-            if body[0..1] == "\"".to_string() {
-                req_len = body.len()-2;
-                req_body = body[1..body.len()-1].to_string();
-            } else {
-                req_len = body.len();
-                req_body = body.to_string();
-            }
-            if path == "/bulk".to_string() {
-                content_type = HeaderValue::from_static("application/x-ndjson");
-                let re = Regex::new(r#"(?<!\\)\\\""#).unwrap();
-                req_body = re.replace_all(req_body.as_str(), "\"").to_string();
-            } else {
-                content_type = HeaderValue::from_static("application/json");
-            }
-            req_headers.insert(CONTENT_TYPE, content_type);
-            req_headers.insert(CONTENT_LENGTH, req_len.into());
-            req_builder.body(req_body)
+            req_headers.insert(CONTENT_TYPE, HeaderValue::from_static("application/json"));
+            req_headers.insert(CONTENT_LENGTH, body.len().into());
+            req_builder.body(body)
         } else {
             req_builder.body(String::new())
         };
         let request = match request_result {
-            Ok(request) => {
-              request
-            },
-            Err(e) => {
-              return Box::pin(futures::future::err(Error::from(e)))
-            }
+            Ok(request) => request,
+            Err(e) => return Box::pin(futures::future::err(Error::from(e)))
         };
+
         let no_return_type = self.no_return_type;
         Box::pin(conf.client
             .request(request)
-            .map_err(|e| { 
-               Error::from(e)
-             } )
+            .map_err(|e| Error::from(e))
             .and_then(move |response| {
                 let status = response.status();
                 if !status.is_success() {
@@ -268,3 +245,4 @@ impl Request {
             }))
     }
 }
+d
