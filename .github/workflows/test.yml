@@ -3,7 +3,7 @@ name: tests
 on: 
   workflow_call:
     branches: 
-      - master
+      - test
 
 jobs:
   test:

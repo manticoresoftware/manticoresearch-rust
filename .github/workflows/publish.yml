@@ -1,0 +1,23 @@
+name: Publishing
+
+on: 
+  push:
+    branches: 
+      - test
+
+
+jobs:
+  test:
+    uses: ./.github/workflows/test.yml
+  publish:
+    name: Publish the client to the public registry
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      CRATES_IO: ${{ secrets.CRATES_IO }}
+
+    steps:
+    - uses: actions/checkout@v4
+    - run: |
+       echo "Publishing to crates.io"
+       cargo login $CRATES_IO
