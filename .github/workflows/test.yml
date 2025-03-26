@@ -1,0 +1,30 @@
+name: tests
+
+on: [workflow_call]
+
+jobs:
+  test:
+
+    name: unit tests
+    runs-on: ubuntu-latest
+    
+    services:
+      manticoresearch-manticore:
+        image: manticoresearch/manticore:dev
+        env:
+          EXTRA: 1
+        ports:
+          - 9308:9308
+
+    strategy:
+      matrix:
+        BUILD_TARGET: [release]
+    outputs:
+      release_built: ${{ steps.set-output.outputs.release_built }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build binaries in "${{ matrix.BUILD_TARGET }}" mode
+        run: cargo build --profile ${{ matrix.BUILD_TARGET }}
+      - name: Run tests in "${{ matrix.BUILD_TARGET }}" mode
+        run: cargo test --profile ${{ matrix.BUILD_TARGET }} -- --show-output
+        
