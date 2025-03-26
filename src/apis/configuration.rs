@@ -39,15 +39,6 @@ impl Configuration<HttpConnector> {
     /// Use [`with_client`](Configuration<T>::with_client) to construct a Configuration with a
     /// custom hyper client.
     ///
-    /// # Example
-    ///
-    /// ```
-    /// # use ::apis::configuration::Configuration;
-    /// let api_config = Configuration {
-    ///   basic_auth: Some(("user".into(), None)),
-    ///   ..Configuration::new()
-    /// };
-    /// ```
     pub fn new() -> Configuration<HttpConnector> {
         Configuration::default()
     }
@@ -58,20 +49,6 @@ impl<C: Connect> Configuration<C>
 
     /// Construct a new Configuration with a custom hyper client.
     ///
-    /// # Example
-    ///
-    /// ```
-    /// # use core::time::Duration;
-    /// # use ::apis::configuration::Configuration;
-    /// use hyper_util::client::legacy::Client;
-    /// use hyper_util::rt::TokioExecutor;
-    ///
-    /// let client = Client::builder(TokioExecutor::new())
-    ///   .pool_idle_timeout(Duration::from_secs(30))
-    ///   .build_http();
-    ///
-    /// let api_config = Configuration::with_client(client);
-    /// ```
     pub fn with_client(client: Client<C, String>) -> Configuration<C> {
         Configuration {
             base_path: "http://127.0.0.1:9308".to_owned(),
