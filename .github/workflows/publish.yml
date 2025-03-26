@@ -3,7 +3,7 @@ name: Publishing
 on: 
   push:
     branches: 
-      - master
+      - main
 
 
 jobs:
