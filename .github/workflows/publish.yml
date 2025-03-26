@@ -3,7 +3,7 @@ name: Publishing
 on: 
   push:
     branches: 
-      - test
+      - master
 
 
 jobs:
@@ -21,3 +21,6 @@ jobs:
     - run: |
        echo "Publishing to crates.io"
        cargo login $CRATES_IO
+       cargo build -r
+       cargo package
+       cargo publish
