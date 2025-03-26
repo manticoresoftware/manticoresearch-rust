@@ -14,6 +14,7 @@ async fn index_api_basic_insert() {
 
     // Drop the table if it exists
     let _ = utils_api.sql("DROP TABLE IF EXISTS products", Some(true)).await;
+    assert!(res.is_ok(), "DROP TABLE failed: {:?}", res.err());
 
     // Create table
     let res = utils_api
@@ -54,6 +55,8 @@ async fn index_api_basic_bulk() {
 
     // Drop the table if it exists
     let _ = utils_api.sql("DROP TABLE IF EXISTS products", Some(true)).await;
+    assert!(res.is_ok(), "DROP TABLE failed: {:?}", res.err());
+    tokio::time::delay_for(tokio::time::Duration::from_millis(1000));
 
     // Create table
     let res = utils_api
