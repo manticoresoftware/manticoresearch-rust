@@ -1,4 +1,7 @@
-# Rust API client for manticoresearch
+# Manticore Rust client
+
+❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-rust/tree/1.0.0
+
 
 Сlient for Manticore Search.
 
@@ -91,7 +94,97 @@ To get access to the crate's generated documentation, use:
 cargo doc --open
 ```
 
-## Author
+## Compatibility table
 
-info@manticoresearch.com
+| **manticoresearch-rust* | **Manticore Search**                | **Compatibility**       |
+| ------------------------| ----------------------------------- | ------------------------|
+| `manticoresearch-dev`   | `dev` (latest development version)  | ✅ Fully Compatible     |
+| 1.0.0 or newer          | 7.0.0 or newer                      | ✅ Fully Compatible     |
 
+
+## Getting started
+
+```rust
+
+use std::sync::Arc;
+use std::collections::HashMap;
+use serde_json;
+use http_body_util::BodyExt;
+use tokio;
+use manticoresearch::{
+    apis::{
+        {Error,configuration::Configuration,IndexApi,IndexApiClient,SearchApi,SearchApiClient,UtilsApi,UtilsApiClient}
+    },
+    models::{SearchRequest,SearchQuery,Highlight}
+};
+
+
+#[tokio::main]
+async fn main() {
+    let api_config = Arc::new(Configuration::new());
+    let utils_api = UtilsApiClient::new(api_config.clone());
+    let index_api = IndexApiClient::new(api_config.clone());
+    let search_api = SearchApiClient::new(api_config.clone());
+
+    // Drop table if it exists
+    let _ = utils_api.sql("DROP TABLE IF EXISTS movies", Some(true)).await;
+    
+    // Create table
+    let _ = utils_api
+        .sql(
+            "CREATE TABLE IF NOT EXISTS movies (title text, plot text, _year integer, rating float, cat string, code multi, type_vector float_vector knn_type='hnsw' knn_dims='3' hnsw_similarity='l2')",
+            Some(true),
+        )
+        .await;
+    
+    // Bulk insert documents
+    let bulk_body = r#"{"insert": {"table" : "movies", "id" : 1, "doc" : {"title" : "Star Trek 2: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2002, "rating": 6.4, "cat": "R", "code": [1,2,3], "type_vector": [0.2, 1.4, -2.3]}}}
+{"insert": {"table" : "movies", "id" : 2, "doc" : {"title" : "Star Trek 1: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2001, "rating": 6.5, "cat": "PG-13", "code": [1,12,3], "type_vector": [0.8, 0.4, 1.3]}}}
+{"insert": {"table" : "movies", "id" : 3, "doc" : {"title" : "Star Trek 3: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2003, "rating": 6.6, "cat": "R", "code": [11,2,3], "type_vector": [1.5, -1.0, 1.6]}}}
+{"insert": {"table" : "movies", "id" : 4, "doc" : {"title" : "Star Trek 4: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2003, "rating": 6.0, "cat": "R", "code": [1,2,4], "type_vector": [0.4, 2.4, 0.9]}}}
+"#;
+
+    let _ = index_api.bulk(bulk_body).await;
+    
+    // Prepare search request
+    let query = SearchQuery {
+        query_string: Some(serde_json::json!("Star").into()),
+        ..Default::default()
+    };
+
+    let highlight = Highlight {
+        fields: Some(serde_json::json!(["title"]).into()),
+        ..Default::default()
+    };
+
+    let mut options = HashMap::new();
+    options.insert("cutoff".to_string(), serde_json::json!(5));
+    options.insert("ranker".to_string(), serde_json::json!("bm25"));
+
+    let search_request = SearchRequest {
+        table: "movies".to_string(),
+        query: Some(Box::new(query)),
+        highlight: Some(Box::new(highlight)),
+        options: Some(serde_json::json!(options)),
+        ..Default::default()
+    };
+
+    // Perform search
+    let res = search_api.search(search_request).await;
+    
+    let _ = match res {
+        Ok(result) => {
+            println!("Search result: {:?}", result)        
+        },
+        Err(error) => {
+            if let Error::Api(error_info) = error {
+                let body_bytes = error_info.body.collect().await.expect("ERROR RESPONSE").to_bytes();
+                println!("Error response: {:?}", String::from_utf8(body_bytes.to_vec()).unwrap())
+            }
+        }
+    };
+    
+}
+
+
+```
