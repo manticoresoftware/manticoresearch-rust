@@ -1,9 +1,6 @@
 name: tests
 
-on: 
-  workflow_call:
-    branches: 
-      - test
+on: [workflow_call]
 
 jobs:
   test:
