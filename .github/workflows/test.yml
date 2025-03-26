@@ -26,5 +26,5 @@ jobs:
       - name: Build binaries in "${{ matrix.BUILD_TARGET }}" mode
         run: cargo build --profile ${{ matrix.BUILD_TARGET }}
       - name: Run tests in "${{ matrix.BUILD_TARGET }}" mode
-        run: cargo test -- --show-output --profile ${{ matrix.BUILD_TARGET }}
+        run: cargo test --profile ${{ matrix.BUILD_TARGET }} --show-output
         
