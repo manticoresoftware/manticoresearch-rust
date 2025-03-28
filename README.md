@@ -13,7 +13,7 @@ For more information, please visit [https://manticoresearch.com/contact-us/](htt
 | **manticoresearch-rust* | **Manticore Search**                | **Compatibility**       |
 | ------------------------| ----------------------------------- | ------------------------|
 | `manticoresearch-dev`   | `dev` (latest development version)  | ✅ Fully Compatible     |
-| 1.0.0 or newer          | 9.2.14or newer                      | ✅ Fully Compatible     |
+| 1.0.0 or newer          | 9.2.14 or newer                     | ✅ Fully Compatible     |
 
 ## Installation
 
