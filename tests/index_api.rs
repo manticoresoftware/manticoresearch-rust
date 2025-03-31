@@ -2,7 +2,7 @@ use std::sync::Arc;
 use tokio;
 use manticoresearch::{
     apis::{configuration::Configuration, UtilsApi, UtilsApiClient, IndexApi, IndexApiClient},
-    models::InsertDocumentRequest, models::SqlResponse,
+    models::InsertDocumentRequest,
 };
 use std::collections::HashMap;
 
