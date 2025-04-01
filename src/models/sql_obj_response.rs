@@ -15,12 +15,18 @@ use serde::{Deserialize, Serialize};
 pub struct SqlObjResponse {
     #[serde(rename = "hits")]
     pub hits: serde_json::Value,
+    #[serde(rename = "took", skip_serializing_if = "Option::is_none")]
+    pub took: Option<f32>,
+    #[serde(rename = "timed_out", skip_serializing_if = "Option::is_none")]
+    pub timed_out: Option<bool>,
 }
 
 impl SqlObjResponse {
     pub fn new(hits: serde_json::Value) -> SqlObjResponse {
         SqlObjResponse {
             hits,
+            took: None,
+            timed_out: None,
         }
     }
 }
