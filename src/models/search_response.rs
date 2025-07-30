@@ -24,7 +24,7 @@ pub struct SearchResponse {
     #[serde(rename = "aggregations", skip_serializing_if = "Option::is_none")]
     pub aggregations: Option<serde_json::Value>,
     #[serde(rename = "hits", skip_serializing_if = "Option::is_none")]
-    pub hits: Option<Box<crate::models::SearchResponseHits>>,
+    pub hits: Option<Box<models::SearchResponseHits>>,
     /// Profile information about the search execution, if profiling is enabled
     #[serde(rename = "profile", skip_serializing_if = "Option::is_none")]
     pub profile: Option<serde_json::Value>,

@@ -18,16 +18,16 @@ pub struct Join {
     pub r#type: Type,
     /// List of objects defining joined tables
     #[serde(rename = "on")]
-    pub on: Vec<crate::models::JoinOn>,
+    pub on: Vec<models::JoinOn>,
     #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
-    pub query: Option<Box<crate::models::FulltextFilter>>,
+    pub query: Option<Box<models::FulltextFilter>>,
     /// Basic table of the join operation
     #[serde(rename = "table")]
     pub table: String,
 }
 
 impl Join {
-    pub fn new(r#type: Type, on: Vec<crate::models::JoinOn>, table: String) -> Join {
+    pub fn new(r#type: Type, on: Vec<models::JoinOn>, table: String) -> Join {
         Join {
             r#type,
             on,

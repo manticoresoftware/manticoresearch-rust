@@ -18,7 +18,7 @@ pub struct AggComposite {
     #[serde(rename = "size", skip_serializing_if = "Option::is_none")]
     pub size: Option<i32>,
     #[serde(rename = "sources", skip_serializing_if = "Option::is_none")]
-    pub sources: Option<Vec<::std::collections::HashMap<String, crate::models::AggCompositeSource>>>,
+    pub sources: Option<Vec<std::collections::HashMap<String, models::AggCompositeSource>>>,
 }
 
 impl AggComposite {

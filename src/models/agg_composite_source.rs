@@ -15,12 +15,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct AggCompositeSource {
     #[serde(rename = "terms")]
-    pub terms: Box<crate::models::AggCompositeTerm>,
+    pub terms: Box<models::AggCompositeTerm>,
 }
 
 impl AggCompositeSource {
     /// Object containing terms used for composite aggregation.
-    pub fn new(terms: crate::models::AggCompositeTerm) -> AggCompositeSource {
+    pub fn new(terms: models::AggCompositeTerm) -> AggCompositeSource {
         AggCompositeSource {
             terms: Box::new(terms),
         }

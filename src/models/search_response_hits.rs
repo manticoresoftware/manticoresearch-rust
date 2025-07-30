@@ -25,7 +25,7 @@ pub struct SearchResponseHits {
     pub total_relation: Option<String>,
     /// Array of hit objects, each representing a matched document
     #[serde(rename = "hits", skip_serializing_if = "Option::is_none")]
-    pub hits: Option<Vec<crate::models::HitsHits>>,
+    pub hits: Option<Vec<models::HitsHits>>,
 }
 
 impl SearchResponseHits {

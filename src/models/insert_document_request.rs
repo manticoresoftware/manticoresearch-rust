@@ -22,7 +22,7 @@ pub struct InsertDocumentRequest {
     pub cluster: Option<String>,
     /// Document ID. If not provided, an ID will be auto-generated 
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     /// Object containing document data 
     #[serde(rename = "doc")]
     pub doc: serde_json::Value,

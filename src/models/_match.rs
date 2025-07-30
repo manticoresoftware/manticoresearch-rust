@@ -19,7 +19,7 @@ pub struct Match {
     #[serde(rename = "operator", skip_serializing_if = "Option::is_none")]
     pub operator: Option<Operator>,
     #[serde(rename = "boost", skip_serializing_if = "Option::is_none")]
-    pub boost: Option<f32>,
+    pub boost: Option<f64>,
 }
 
 impl Match {

@@ -1,14 +1,12 @@
 [package]
 name = "manticoresearch"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["info@manticoresearch.com"]
 description = "Сlient for Manticore Search. "
 license = "MIT"
 edition = "2021"
 
 [dependencies]
-tokio = {version = "1", features = ["full"]}
-fancy-regex = "^0.14"
 serde = { version = "^1.0", features = ["derive"] }
 serde_with = { version = "^3.8", default-features = false, features = ["base64", "std", "macros"] }
 serde_json = "^1.0"

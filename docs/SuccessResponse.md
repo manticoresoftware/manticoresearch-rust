@@ -5,7 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **table** | Option<**String**> | Name of the document table | [optional]
-**id** | Option<**i64**> | ID of the document affected by the request operation | [optional]
+**id** | Option<**i32**> | ID of the document affected by the request operation | [optional]
 **created** | Option<**bool**> | Indicates whether the document was created as a result of the operation | [optional]
 **result** | Option<**String**> | Result of the operation, typically 'created', 'updated', or 'deleted' | [optional]
 **found** | Option<**bool**> | Indicates whether the document was found in the table | [optional]

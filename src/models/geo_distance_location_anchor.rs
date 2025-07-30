@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct GeoDistanceLocationAnchor {
     /// Latitude of the anchor point
-    #[serde(rename = "lat", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub lat: Option<Option<serde_json::Value>>,
+    #[serde(rename = "lat", skip_serializing_if = "Option::is_none")]
+    pub lat: Option<f64>,
     /// Longitude of the anchor point
-    #[serde(rename = "lon", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub lon: Option<Option<serde_json::Value>>,
+    #[serde(rename = "lon", skip_serializing_if = "Option::is_none")]
+    pub lon: Option<f64>,
 }
 
 impl GeoDistanceLocationAnchor {

@@ -14,9 +14,9 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct JoinOn {
     #[serde(rename = "right", skip_serializing_if = "Option::is_none")]
-    pub right: Option<Box<crate::models::JoinCond>>,
+    pub right: Option<Box<models::JoinCond>>,
     #[serde(rename = "left", skip_serializing_if = "Option::is_none")]
-    pub left: Option<Box<crate::models::JoinCond>>,
+    pub left: Option<Box<models::JoinCond>>,
     #[serde(rename = "operator", skip_serializing_if = "Option::is_none")]
     pub operator: Option<Operator>,
 }

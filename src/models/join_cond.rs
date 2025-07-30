@@ -20,6 +20,8 @@ pub struct JoinCond {
     /// Joined table
     #[serde(rename = "table")]
     pub table: String,
+    #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
+    pub query: Option<Box<models::FulltextFilter>>,
     #[serde(rename = "type", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub r#type: Option<Option<serde_json::Value>>,
 }
@@ -30,6 +32,7 @@ impl JoinCond {
         JoinCond {
             field,
             table,
+            query: None,
             r#type: None,
         }
     }

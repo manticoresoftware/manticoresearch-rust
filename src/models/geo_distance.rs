@@ -15,16 +15,16 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct GeoDistance {
     #[serde(rename = "location_anchor", skip_serializing_if = "Option::is_none")]
-    pub location_anchor: Option<Box<crate::models::GeoDistanceLocationAnchor>>,
+    pub location_anchor: Option<Box<models::GeoDistanceLocationAnchor>>,
     /// Field name in the document that contains location data
-    #[serde(rename = "location_source", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub location_source: Option<Option<serde_json::Value>>,
+    #[serde(rename = "location_source", skip_serializing_if = "Option::is_none")]
+    pub location_source: Option<String>,
     /// Algorithm used to calculate the distance
-    #[serde(rename = "distance_type", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub distance_type: Option<Option<DistanceType>>,
+    #[serde(rename = "distance_type", skip_serializing_if = "Option::is_none")]
+    pub distance_type: Option<DistanceType>,
     /// The distance from the anchor point to filter results by
-    #[serde(rename = "distance", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub distance: Option<Option<serde_json::Value>>,
+    #[serde(rename = "distance", skip_serializing_if = "Option::is_none")]
+    pub distance: Option<String>,
 }
 
 impl GeoDistance {

@@ -22,7 +22,7 @@ pub struct DeleteDocumentRequest {
     pub cluster: Option<String>,
     /// The ID of document for deletion
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     /// Defines the criteria to match documents for deletion
     #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
     pub query: Option<serde_json::Value>,

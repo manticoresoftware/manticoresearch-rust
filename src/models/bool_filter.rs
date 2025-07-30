@@ -15,13 +15,13 @@ use serde::{Deserialize, Serialize};
 pub struct BoolFilter {
     /// Query clauses that must match for the document to be included
     #[serde(rename = "must", skip_serializing_if = "Option::is_none")]
-    pub must: Option<Vec<crate::models::QueryFilter>>,
+    pub must: Option<Vec<models::QueryFilter>>,
     /// Query clauses that must not match for the document to be included
     #[serde(rename = "must_not", skip_serializing_if = "Option::is_none")]
-    pub must_not: Option<Vec<crate::models::QueryFilter>>,
+    pub must_not: Option<Vec<models::QueryFilter>>,
     /// Query clauses that should be matched, but are not required
     #[serde(rename = "should", skip_serializing_if = "Option::is_none")]
-    pub should: Option<Vec<crate::models::QueryFilter>>,
+    pub should: Option<Vec<models::QueryFilter>>,
 }
 
 impl BoolFilter {

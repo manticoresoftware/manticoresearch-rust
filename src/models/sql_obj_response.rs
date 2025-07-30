@@ -16,7 +16,7 @@ pub struct SqlObjResponse {
     #[serde(rename = "hits")]
     pub hits: serde_json::Value,
     #[serde(rename = "took", skip_serializing_if = "Option::is_none")]
-    pub took: Option<f32>,
+    pub took: Option<f64>,
     #[serde(rename = "timed_out", skip_serializing_if = "Option::is_none")]
     pub timed_out: Option<bool>,
 }

@@ -22,7 +22,7 @@ pub struct UpdateResponse {
     pub updated: Option<i32>,
     /// Document ID
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i64>,
+    pub id: Option<i32>,
     /// Result of the update operation, typically 'updated'
     #[serde(rename = "result", skip_serializing_if = "Option::is_none")]
     pub result: Option<String>,

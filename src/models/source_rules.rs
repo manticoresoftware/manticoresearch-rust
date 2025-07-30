@@ -15,11 +15,11 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SourceRules {
     /// List of fields to include in the response
-    #[serde(rename = "includes", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub includes: Option<Option<serde_json::Value>>,
+    #[serde(rename = "includes", skip_serializing_if = "Option::is_none")]
+    pub includes: Option<Vec<String>>,
     /// List of fields to exclude from the response
-    #[serde(rename = "excludes", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub excludes: Option<Option<serde_json::Value>>,
+    #[serde(rename = "excludes", skip_serializing_if = "Option::is_none")]
+    pub excludes: Option<Vec<String>>,
 }
 
 impl SourceRules {

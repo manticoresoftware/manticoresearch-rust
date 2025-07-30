@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 pub struct HitsHits {
     /// The ID of the matched document
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    pub _id: Option<i64>,
+    pub _id: Option<i32>,
     /// The score of the matched document
     #[serde(rename = "_score", skip_serializing_if = "Option::is_none")]
     pub _score: Option<i32>,
@@ -25,7 +25,7 @@ pub struct HitsHits {
     pub _source: Option<serde_json::Value>,
     /// The knn distance of the matched document returned for knn queries
     #[serde(rename = "_knn_dist", skip_serializing_if = "Option::is_none")]
-    pub _knn_dist: Option<f32>,
+    pub _knn_dist: Option<f64>,
     /// The highlighting-related data of the matched document
     #[serde(rename = "highlight", skip_serializing_if = "Option::is_none")]
     pub highlight: Option<serde_json::Value>,

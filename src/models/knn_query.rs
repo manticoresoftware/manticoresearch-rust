@@ -22,15 +22,15 @@ pub struct KnnQuery {
     pub k: i32,
     /// The vector used as input for the KNN search
     #[serde(rename = "query_vector", skip_serializing_if = "Option::is_none")]
-    pub query_vector: Option<Vec<f32>>,
+    pub query_vector: Option<Vec<f64>>,
     /// The docuemnt ID used as input for the KNN search
     #[serde(rename = "doc_id", skip_serializing_if = "Option::is_none")]
-    pub doc_id: Option<i64>,
+    pub doc_id: Option<i32>,
     /// Optional parameter controlling the accuracy of the search
     #[serde(rename = "ef", skip_serializing_if = "Option::is_none")]
     pub ef: Option<i32>,
     #[serde(rename = "filter", skip_serializing_if = "Option::is_none")]
-    pub filter: Option<Box<crate::models::QueryFilter>>,
+    pub filter: Option<Box<models::QueryFilter>>,
 }
 
 impl KnnQuery {

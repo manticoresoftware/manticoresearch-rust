@@ -14,20 +14,20 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Highlight {
     /// Maximum size of the text fragments in highlighted snippets per field
-    #[serde(rename = "fragment_size", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub fragment_size: Option<Option<serde_json::Value>>,
+    #[serde(rename = "fragment_size", skip_serializing_if = "Option::is_none")]
+    pub fragment_size: Option<i32>,
     /// Maximum size of snippets per field
-    #[serde(rename = "limit", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub limit: Option<Option<serde_json::Value>>,
+    #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
+    pub limit: Option<i32>,
     /// Maximum number of snippets per field
-    #[serde(rename = "limit_snippets", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub limit_snippets: Option<Option<serde_json::Value>>,
+    #[serde(rename = "limit_snippets", skip_serializing_if = "Option::is_none")]
+    pub limit_snippets: Option<i32>,
     /// Maximum number of words per field
-    #[serde(rename = "limit_words", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub limit_words: Option<Option<serde_json::Value>>,
+    #[serde(rename = "limit_words", skip_serializing_if = "Option::is_none")]
+    pub limit_words: Option<i32>,
     /// Total number of highlighted fragments per field
-    #[serde(rename = "number_of_fragments", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub number_of_fragments: Option<Option<serde_json::Value>>,
+    #[serde(rename = "number_of_fragments", skip_serializing_if = "Option::is_none")]
+    pub number_of_fragments: Option<i32>,
     /// Text inserted after the matched term, typically used for HTML formatting
     #[serde(rename = "after_match", skip_serializing_if = "Option::is_none")]
     pub after_match: Option<String>,
@@ -46,8 +46,8 @@ pub struct Highlight {
     /// If set to 'html', retains HTML markup when highlighting
     #[serde(rename = "encoder", skip_serializing_if = "Option::is_none")]
     pub encoder: Option<Encoder>,
-    #[serde(rename = "fields", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub fields: Option<Option<serde_json::Value>>,
+    #[serde(rename = "fields", skip_serializing_if = "Option::is_none")]
+    pub fields: Option<Box<models::HighlightFields>>,
     /// Ignores the length limit until the result includes all keywords
     #[serde(rename = "force_all_words", skip_serializing_if = "Option::is_none")]
     pub force_all_words: Option<bool>,
@@ -55,7 +55,7 @@ pub struct Highlight {
     #[serde(rename = "force_snippets", skip_serializing_if = "Option::is_none")]
     pub force_snippets: Option<bool>,
     #[serde(rename = "highlight_query", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub highlight_query: Option<Option<Box<crate::models::QueryFilter>>>,
+    pub highlight_query: Option<Option<Box<models::QueryFilter>>>,
     /// Defines the mode for handling HTML markup in the highlight
     #[serde(rename = "html_strip_mode", skip_serializing_if = "Option::is_none")]
     pub html_strip_mode: Option<HtmlStripMode>,

@@ -15,12 +15,12 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct PercolateRequest {
     #[serde(rename = "query")]
-    pub query: Box<crate::models::PercolateRequestQuery>,
+    pub query: Box<models::PercolateRequestQuery>,
 }
 
 impl PercolateRequest {
     /// Object containing the query for percolating documents against stored queries in a percolate table
-    pub fn new(query: crate::models::PercolateRequestQuery) -> PercolateRequest {
+    pub fn new(query: models::PercolateRequestQuery) -> PercolateRequest {
         PercolateRequest {
             query: Box::new(query),
         }

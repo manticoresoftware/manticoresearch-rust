@@ -15,7 +15,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ErrorResponse {
     #[serde(rename = "error")]
-    pub error: Box<crate::models::ResponseError>,
+    pub error: Box<models::ResponseError>,
     /// HTTP status code of the error response
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<i32>,
@@ -23,7 +23,7 @@ pub struct ErrorResponse {
 
 impl ErrorResponse {
     /// Error response object containing information about the error and a status code
-    pub fn new(error: crate::models::ResponseError) -> ErrorResponse {
+    pub fn new(error: models::ResponseError) -> ErrorResponse {
         ErrorResponse {
             error: Box::new(error),
             status: None,

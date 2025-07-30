@@ -18,23 +18,23 @@ pub struct SearchRequest {
     #[serde(rename = "table")]
     pub table: String,
     #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
-    pub query: Option<Box<crate::models::SearchQuery>>,
+    pub query: Option<Box<models::SearchQuery>>,
     /// Join clause to combine search data from multiple tables
     #[serde(rename = "join", skip_serializing_if = "Option::is_none")]
-    pub join: Option<Vec<crate::models::Join>>,
+    pub join: Option<Vec<models::Join>>,
     #[serde(rename = "highlight", skip_serializing_if = "Option::is_none")]
-    pub highlight: Option<Box<crate::models::Highlight>>,
+    pub highlight: Option<Box<models::Highlight>>,
     /// Maximum number of results to return
     #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
     #[serde(rename = "knn", skip_serializing_if = "Option::is_none")]
-    pub knn: Option<Box<crate::models::KnnQuery>>,
+    pub knn: Option<Box<models::KnnQuery>>,
     /// Defines aggregation settings for grouping results
-    #[serde(rename = "aggs", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub aggs: Option<Option<::std::collections::HashMap<String, crate::models::Aggregation>>>,
+    #[serde(rename = "aggs", skip_serializing_if = "Option::is_none")]
+    pub aggs: Option<std::collections::HashMap<String, models::Aggregation>>,
     /// Expressions to calculate additional values for the result
-    #[serde(rename = "expressions", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub expressions: Option<Option<::std::collections::HashMap<String, String>>>,
+    #[serde(rename = "expressions", skip_serializing_if = "Option::is_none")]
+    pub expressions: Option<std::collections::HashMap<String, String>>,
     /// Maximum number of matches allowed in the result
     #[serde(rename = "max_matches", skip_serializing_if = "Option::is_none")]
     pub max_matches: Option<i32>,

@@ -37,17 +37,20 @@ impl<C: Connect> UtilsApiClient<C>
 }
 
 pub trait UtilsApi: Send + Sync {
-    fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<crate::models::SqlResponse, Error>> + Send>>;
+    fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<models::SqlResponse, Error>> + Send>>;
 }
 
 impl<C: Connect>UtilsApi for UtilsApiClient<C>
     where C: Clone + std::marker::Send + Sync {
     #[allow(unused_mut)]
-    fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<crate::models::SqlResponse, Error>> + Send>> {
+    fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<models::SqlResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/sql".to_string())
         ;
         if let Some(ref s) = raw_response {
-            let query_value = s.to_string();
+            let query_value = match serde_json::to_string(s) {
+                Ok(value) => value,
+                Err(e) => return Box::pin(futures::future::err(Error::Serde(e))),
+            };
             req = req.with_query_param("raw_response".to_string(), query_value);
         }
         req = req.with_body_param(body);

@@ -16,13 +16,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum SqlResponse {
-    one_of_0(Vec<serde_json::Value>),
-    one_of_1(Box<crate::models::SqlObjResponse>),
+    SqlRawResponse(Vec<serde_json::Value>),
+    SqlObjResponse(Box<models::SqlObjResponse>),
 }
 
 impl Default for SqlResponse {
     fn default() -> Self {
-        Self::one_of_0(Default::default())
+        Self::SqlRawResponse(Default::default())
     }
 }
 

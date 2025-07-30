@@ -6,6 +6,8 @@ README.md
 docs/AggComposite.md
 docs/AggCompositeSource.md
 docs/AggCompositeTerm.md
+docs/AggDateHistogram.md
+docs/AggHistogram.md
 docs/AggTerms.md
 docs/Aggregation.md
 docs/AutocompleteRequest.md
@@ -19,6 +21,7 @@ docs/GeoDistance.md
 docs/GeoDistanceLocationAnchor.md
 docs/Highlight.md
 docs/HighlightFieldOption.md
+docs/HighlightFields.md
 docs/HitsHits.md
 docs/IndexApi.md
 docs/InsertDocumentRequest.md
@@ -60,6 +63,8 @@ src/models/_match.rs
 src/models/agg_composite.rs
 src/models/agg_composite_source.rs
 src/models/agg_composite_term.rs
+src/models/agg_date_histogram.rs
+src/models/agg_histogram.rs
 src/models/agg_terms.rs
 src/models/aggregation.rs
 src/models/autocomplete_request.rs
@@ -73,6 +78,7 @@ src/models/geo_distance.rs
 src/models/geo_distance_location_anchor.rs
 src/models/highlight.rs
 src/models/highlight_field_option.rs
+src/models/highlight_fields.rs
 src/models/hits_hits.rs
 src/models/insert_document_request.rs
 src/models/join.rs

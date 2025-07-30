@@ -15,31 +15,31 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SearchQuery {
     /// Filter object defining a query string
-    #[serde(rename = "query_string", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub query_string: Option<Option<serde_json::Value>>,
+    #[serde(rename = "query_string", skip_serializing_if = "Option::is_none")]
+    pub query_string: Option<String>,
     /// Filter object defining a match keyword passed as a string or in a Match object
-    #[serde(rename = "match", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub r#match: Option<Option<serde_json::Value>>,
+    #[serde(rename = "match", skip_serializing_if = "Option::is_none")]
+    pub r#match: Option<serde_json::Value>,
     /// Filter object defining a match phrase
-    #[serde(rename = "match_phrase", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub match_phrase: Option<Option<serde_json::Value>>,
+    #[serde(rename = "match_phrase", skip_serializing_if = "Option::is_none")]
+    pub match_phrase: Option<serde_json::Value>,
     /// Filter object to select all documents
-    #[serde(rename = "match_all", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub match_all: Option<Option<serde_json::Value>>,
+    #[serde(rename = "match_all", skip_serializing_if = "Option::is_none")]
+    pub match_all: Option<serde_json::Value>,
     #[serde(rename = "bool", skip_serializing_if = "Option::is_none")]
-    pub bool: Option<Box<crate::models::BoolFilter>>,
+    pub bool: Option<Box<models::BoolFilter>>,
     #[serde(rename = "equals", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub equals: Option<Option<serde_json::Value>>,
     /// Filter to match a given set of attribute values.
-    #[serde(rename = "in", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub r#in: Option<Option<serde_json::Value>>,
+    #[serde(rename = "in", skip_serializing_if = "Option::is_none")]
+    pub r#in: Option<serde_json::Value>,
     /// Filter to match a given range of attribute values passed in Range objects
-    #[serde(rename = "range", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub range: Option<Option<serde_json::Value>>,
+    #[serde(rename = "range", skip_serializing_if = "Option::is_none")]
+    pub range: Option<serde_json::Value>,
     #[serde(rename = "geo_distance", skip_serializing_if = "Option::is_none")]
-    pub geo_distance: Option<Box<crate::models::GeoDistance>>,
+    pub geo_distance: Option<models::GeoDistance>,
     #[serde(rename = "highlight", skip_serializing_if = "Option::is_none")]
-    pub highlight: Option<Box<crate::models::Highlight>>,
+    pub highlight: Option<Box<models::Highlight>>,
 }
 
 impl SearchQuery {

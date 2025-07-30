@@ -38,8 +38,8 @@ impl<C: Connect> SearchApiClient<C>
 
 pub trait SearchApi: Send + Sync {
     fn autocomplete(&self, autocomplete_request: models::AutocompleteRequest) -> Pin<Box<dyn Future<Output = Result<Vec<serde_json::Value>, Error>> + Send>>;
-    fn percolate(&self, table: &str, percolate_request: models::PercolateRequest) -> Pin<Box<dyn Future<Output = Result<crate::models::SearchResponse, Error>> + Send>>;
-    fn search(&self, search_request: models::SearchRequest) -> Pin<Box<dyn Future<Output = Result<crate::models::SearchResponse, Error>> + Send>>;
+    fn percolate(&self, table: &str, percolate_request: models::PercolateRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>>;
+    fn search(&self, search_request: models::SearchRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>>;
 }
 
 impl<C: Connect>SearchApi for SearchApiClient<C>
@@ -54,7 +54,7 @@ impl<C: Connect>SearchApi for SearchApiClient<C>
     }
 
     #[allow(unused_mut)]
-    fn percolate(&self, table: &str, percolate_request: models::PercolateRequest) -> Pin<Box<dyn Future<Output = Result<crate::models::SearchResponse, Error>> + Send>> {
+    fn percolate(&self, table: &str, percolate_request: models::PercolateRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/pq/{table}/search".to_string())
         ;
         req = req.with_path_param("table".to_string(), table.to_string());
@@ -64,7 +64,7 @@ impl<C: Connect>SearchApi for SearchApiClient<C>
     }
 
     #[allow(unused_mut)]
-    fn search(&self, search_request: models::SearchRequest) -> Pin<Box<dyn Future<Output = Result<crate::models::SearchResponse, Error>> + Send>> {
+    fn search(&self, search_request: models::SearchRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/search".to_string())
         ;
         req = req.with_body_param(search_request);

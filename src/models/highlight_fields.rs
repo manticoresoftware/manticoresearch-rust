@@ -11,17 +11,18 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
+/// HighlightFields : List of fields available for highlighting
+/// List of fields available for highlighting
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
-pub enum ResponseError {
-    ResponseErrorDetails(Box<models::ResponseErrorDetails>),
-    /// Error message text returned in case of an error
-    ResponseErrorText(String),
+pub enum HighlightFields {
+    Array(Vec<String>),
+    Object(serde_json::Value),
 }
 
-impl Default for ResponseError {
+impl Default for HighlightFields {
     fn default() -> Self {
-        Self::ResponseErrorDetails(Default::default())
+        Self::Array(Default::default())
     }
 }
 

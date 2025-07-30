@@ -14,11 +14,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Aggregation {
     #[serde(rename = "terms", skip_serializing_if = "Option::is_none")]
-    pub terms: Option<Box<crate::models::AggTerms>>,
+    pub terms: Option<Box<models::AggTerms>>,
     #[serde(rename = "sort", skip_serializing_if = "Option::is_none")]
     pub sort: Option<Vec<serde_json::Value>>,
     #[serde(rename = "composite", skip_serializing_if = "Option::is_none")]
-    pub composite: Option<Box<crate::models::AggComposite>>,
+    pub composite: Option<Box<models::AggComposite>>,
+    #[serde(rename = "histogram", skip_serializing_if = "Option::is_none")]
+    pub histogram: Option<Box<models::AggHistogram>>,
 }
 
 impl Aggregation {
@@ -27,6 +29,7 @@ impl Aggregation {
             terms: None,
             sort: None,
             composite: None,
+            histogram: None,
         }
     }
 }

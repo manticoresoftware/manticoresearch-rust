@@ -4,7 +4,7 @@
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**items** | Option<[**Vec<serde_json::Value>**](Serde_json::Value.md)> | List of results | [optional]
+**items** | Option<[**Vec<serde_json::Value>**](serde_json::Value.md)> | List of results | [optional]
 **errors** | Option<**bool**> | Errors occurred during the bulk operation | [optional]
 **error** | Option<**String**> | Error message describing an error if such occurred | [optional]
 **current_line** | Option<**i32**> | Number of the row returned in the response | [optional]
