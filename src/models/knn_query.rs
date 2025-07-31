@@ -25,7 +25,7 @@ pub struct KnnQuery {
     pub query_vector: Option<Vec<f64>>,
     /// The docuemnt ID used as input for the KNN search
     #[serde(rename = "doc_id", skip_serializing_if = "Option::is_none")]
-    pub doc_id: Option<i32>,
+    pub doc_id: Option<u64>,
     /// Optional parameter controlling the accuracy of the search
     #[serde(rename = "ef", skip_serializing_if = "Option::is_none")]
     pub ef: Option<i32>,

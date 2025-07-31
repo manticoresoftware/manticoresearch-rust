@@ -25,7 +25,7 @@ pub struct UpdateDocumentRequest {
     pub doc: serde_json::Value,
     /// Document ID
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
+    pub id: Option<u64>,
     #[serde(rename = "query", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub query: Option<Option<Box<models::QueryFilter>>>,
 }

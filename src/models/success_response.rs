@@ -19,7 +19,7 @@ pub struct SuccessResponse {
     pub table: Option<String>,
     /// ID of the document affected by the request operation
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
+    pub id: Option<u64>,
     /// Indicates whether the document was created as a result of the operation
     #[serde(rename = "created", skip_serializing_if = "Option::is_none")]
     pub created: Option<bool>,

@@ -22,7 +22,7 @@ pub struct DeleteResponse {
     pub deleted: Option<i32>,
     /// The ID of the deleted document. If multiple documents are deleted, the ID of the first deleted document is returned
     #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<i32>,
+    pub id: Option<u64>,
     /// Indicates whether any documents to be deleted were found
     #[serde(rename = "found", skip_serializing_if = "Option::is_none")]
     pub found: Option<bool>,

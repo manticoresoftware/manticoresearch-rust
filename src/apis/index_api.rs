@@ -40,7 +40,7 @@ pub trait IndexApi: Send + Sync {
     fn bulk(&self, body: &str) -> Pin<Box<dyn Future<Output = Result<models::BulkResponse, Error>> + Send>>;
     fn delete(&self, delete_document_request: models::DeleteDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::DeleteResponse, Error>> + Send>>;
     fn insert(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>>;
-    fn partial_replace(&self, table: &str, id: i32, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
+    fn partial_replace(&self, table: &str, id: u64, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
     fn replace(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>>;
     fn update(&self, update_document_request: models::UpdateDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
 }
@@ -75,7 +75,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     }
 
     #[allow(unused_mut)]
-    fn partial_replace(&self, table: &str, id: i32, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
+    fn partial_replace(&self, table: &str, id: u64, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/{table}/_update/{id}".to_string())
         ;
         req = req.with_path_param("table".to_string(), table.to_string());

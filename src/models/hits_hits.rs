@@ -16,7 +16,7 @@ use serde::{Deserialize, Serialize};
 pub struct HitsHits {
     /// The ID of the matched document
     #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
-    pub _id: Option<i32>,
+    pub _id: Option<u64>,
     /// The score of the matched document
     #[serde(rename = "_score", skip_serializing_if = "Option::is_none")]
     pub _score: Option<i32>,
