@@ -3,7 +3,7 @@ use manticoresearch::{
     apis::{
         {configuration::Configuration,IndexApi,IndexApiClient,SearchApi,SearchApiClient,UtilsApi,UtilsApiClient}
     },
-    models::{SearchRequest,SearchQuery,Highlight}
+    models::{SearchRequest,SearchQuery,Highlight,HighlightFields}
 };
 use std::collections::HashMap;
 use tokio;
@@ -40,12 +40,14 @@ async fn search_api_basic_requests() {
 
     // Prepare search request
     let query = SearchQuery {
-        query_string: Some(serde_json::json!("Star").into()),
+        query_string: Some("Star".to_string()),
         ..Default::default()
     };
 
+    let highlight_fields = HighlightFields::Array(vec!["title".to_string()]);
+
     let highlight = Highlight {
-        fields: Some(serde_json::json!(["title"]).into()),
+        fields: Some(Box::new(highlight_fields)),
         ..Default::default()
     };
 

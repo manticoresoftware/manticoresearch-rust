@@ -31,10 +31,10 @@ async fn utils_api_basic_requests() {
     assert!(res.is_ok(), "SHOW TABLES failed: {:?}", res.err());
 
     let result = res.unwrap();
-    let is_arr_response = matches!(result, SqlResponse::one_of_0 { .. });
+    let is_arr_response = matches!(result, SqlResponse::SqlRawResponse { .. });
     assert!(is_arr_response == true);
 
-    if let SqlResponse::one_of_0(objs) = result {
+    if let SqlResponse::SqlRawResponse(objs) = result {
         println!("value: {:#?}", objs[0]);
     }
 }
