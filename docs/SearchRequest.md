@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **join** | Option<[**Vec<models::Join>**](join.md)> | Join clause to combine search data from multiple tables | [optional]
 **highlight** | Option<[**models::Highlight**](highlight.md)> |  | [optional]
 **limit** | Option<**i32**> | Maximum number of results to return | [optional]
-**knn** | Option<[**models::KnnQuery**](knnQuery.md)> |  | [optional]
+**knn** | Option<[**models::Knn**](knn.md)> |  | [optional]
 **aggs** | Option<[**std::collections::HashMap<String, models::Aggregation>**](aggregation.md)> | Defines aggregation settings for grouping results | [optional]
 **expressions** | Option<**std::collections::HashMap<String, String>**> | Expressions to calculate additional values for the result | [optional]
 **max_matches** | Option<**i32**> | Maximum number of matches allowed in the result | [optional]

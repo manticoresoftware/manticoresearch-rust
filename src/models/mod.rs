@@ -46,6 +46,8 @@ pub mod join_cond;
 pub use self::join_cond::JoinCond;
 pub mod join_on;
 pub use self::join_on::JoinOn;
+pub mod knn;
+pub use self::knn::Knn;
 pub mod knn_query;
 pub use self::knn_query::KnnQuery;
 pub mod _match;

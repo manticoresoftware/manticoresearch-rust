@@ -28,7 +28,7 @@ pub struct SearchRequest {
     #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
     #[serde(rename = "knn", skip_serializing_if = "Option::is_none")]
-    pub knn: Option<Box<models::KnnQuery>>,
+    pub knn: Option<Box<models::Knn>>,
     /// Defines aggregation settings for grouping results
     #[serde(rename = "aggs", skip_serializing_if = "Option::is_none")]
     pub aggs: Option<std::collections::HashMap<String, models::Aggregation>>,

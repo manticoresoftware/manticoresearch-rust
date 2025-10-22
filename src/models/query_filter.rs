@@ -37,7 +37,7 @@ pub struct QueryFilter {
     #[serde(rename = "range", skip_serializing_if = "Option::is_none")]
     pub range: Option<serde_json::Value>,
     #[serde(rename = "geo_distance", skip_serializing_if = "Option::is_none")]
-    pub geo_distance: Option<models::GeoDistance>,
+    pub geo_distance: Option<Box<models::GeoDistance>>,
 }
 
 impl QueryFilter {

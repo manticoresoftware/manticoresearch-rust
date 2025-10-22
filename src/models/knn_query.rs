@@ -11,39 +11,16 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// KnnQuery : Object representing a k-nearest neighbor search query
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct KnnQuery {
-    /// Field to perform the k-nearest neighbor search on
-    #[serde(rename = "field")]
-    pub field: String,
-    /// The number of nearest neighbors to return
-    #[serde(rename = "k")]
-    pub k: i32,
-    /// The vector used as input for the KNN search
-    #[serde(rename = "query_vector", skip_serializing_if = "Option::is_none")]
-    pub query_vector: Option<Vec<f64>>,
-    /// The docuemnt ID used as input for the KNN search
-    #[serde(rename = "doc_id", skip_serializing_if = "Option::is_none")]
-    pub doc_id: Option<u64>,
-    /// Optional parameter controlling the accuracy of the search
-    #[serde(rename = "ef", skip_serializing_if = "Option::is_none")]
-    pub ef: Option<i32>,
-    #[serde(rename = "filter", skip_serializing_if = "Option::is_none")]
-    pub filter: Option<Box<models::QueryFilter>>,
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum KnnQuery {
+    String(String),
+    ArrayVecf64(Vec<f64>),
 }
 
-impl KnnQuery {
-    /// Object representing a k-nearest neighbor search query
-    pub fn new(field: String, k: i32) -> KnnQuery {
-        KnnQuery {
-            field,
-            k,
-            query_vector: None,
-            doc_id: None,
-            ef: None,
-            filter: None,
-        }
+impl Default for KnnQuery {
+    fn default() -> Self {
+        Self::String(Default::default())
     }
 }
 

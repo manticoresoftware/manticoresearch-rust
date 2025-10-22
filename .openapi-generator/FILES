@@ -28,6 +28,7 @@ docs/InsertDocumentRequest.md
 docs/Join.md
 docs/JoinCond.md
 docs/JoinOn.md
+docs/Knn.md
 docs/KnnQuery.md
 docs/Match.md
 docs/MatchAll.md
@@ -84,6 +85,7 @@ src/models/insert_document_request.rs
 src/models/join.rs
 src/models/join_cond.rs
 src/models/join_on.rs
+src/models/knn.rs
 src/models/knn_query.rs
 src/models/match_all.rs
 src/models/mod.rs

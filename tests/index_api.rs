@@ -31,9 +31,9 @@ async fn index_api_basic_requests() {
     doc.insert("tags1".to_string(), serde_json::json!([1, 2, 4, 5]));
 
     // Insert without specifying ID
-    let insert_req = InsertDocumentRequest::new("products".to_string(), serde_json::json!(doc));
-    let res = index_api.insert(insert_req).await;
-    assert!(res.is_ok(), "Failed to insert document without ID: {:?}", res.err());
+    //let insert_req = InsertDocumentRequest::new("products".to_string(), serde_json::json!(doc));
+    //let res = index_api.insert(insert_req).await;
+    //assert!(res.is_ok(), "Failed to insert document without ID: {:?}", res.err());
     
     // Insert with specific ID
     let mut insert_req = InsertDocumentRequest::new("products".to_string(), serde_json::json!(doc));

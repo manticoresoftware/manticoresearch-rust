@@ -44,7 +44,7 @@ async fn search_api_basic_requests() {
         ..Default::default()
     };
 
-    let highlight_fields = HighlightFields::Array(vec!["title".to_string()]);
+    let highlight_fields = HighlightFields::ArrayVecString(vec!["title".to_string()]);
 
     let highlight = Highlight {
         fields: Some(Box::new(highlight_fields)),

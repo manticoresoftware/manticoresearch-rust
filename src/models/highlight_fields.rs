@@ -16,13 +16,13 @@ use serde::{Deserialize, Serialize};
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum HighlightFields {
-    Array(Vec<String>),
+    ArrayVecString(Vec<String>),
     Object(serde_json::Value),
 }
 
 impl Default for HighlightFields {
     fn default() -> Self {
-        Self::Array(Default::default())
+        Self::ArrayVecString(Default::default())
     }
 }
 
