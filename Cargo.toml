@@ -1,6 +1,6 @@
 [package]
 name = "manticoresearch"
-version = "1.1.0"
+version = "1.1.0-alpha"
 authors = ["info@manticoresearch.com"]
 description = "Сlient for Manticore Search. "
 license = "MIT"
