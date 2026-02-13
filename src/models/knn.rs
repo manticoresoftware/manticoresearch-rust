@@ -31,6 +31,12 @@ pub struct Knn {
     /// Optional parameter controlling the accuracy of the search
     #[serde(rename = "ef", skip_serializing_if = "Option::is_none")]
     pub ef: Option<i32>,
+    /// Optional parameter enabling KNN rescoring (disabled by default)
+    #[serde(rename = "rescore", skip_serializing_if = "Option::is_none")]
+    pub rescore: Option<bool>,
+    /// Optional parameter setting a factor by which k is multiplied when executing the KNN search
+    #[serde(rename = "oversampling", skip_serializing_if = "Option::is_none")]
+    pub oversampling: Option<f64>,
     #[serde(rename = "filter", skip_serializing_if = "Option::is_none")]
     pub filter: Option<Box<models::QueryFilter>>,
 }
@@ -45,6 +51,8 @@ impl Knn {
             query_vector: None,
             doc_id: None,
             ef: None,
+            rescore: None,
+            oversampling: None,
             filter: None,
         }
     }

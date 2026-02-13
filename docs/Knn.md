@@ -10,6 +10,8 @@ Name | Type | Description | Notes
 **query_vector** | Option<**Vec<f64>**> | The vector used as input for the KNN search | [optional]
 **doc_id** | Option<**i32**> | The docuemnt ID used as input for the KNN search | [optional]
 **ef** | Option<**i32**> | Optional parameter controlling the accuracy of the search | [optional]
+**rescore** | Option<**bool**> | Optional parameter enabling KNN rescoring (disabled by default) | [optional]
+**oversampling** | Option<**f64**> | Optional parameter setting a factor by which k is multiplied when executing the KNN search | [optional]
 **filter** | Option<[**models::QueryFilter**](queryFilter.md)> |  | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
