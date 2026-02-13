@@ -208,14 +208,11 @@ impl Request {
             }
             req_builder.body(enc.finish())
         } else if let Some(body) = self.serialized_body {
-            let req_len;
             let mut req_body;
             let content_type;
-            if body[0..1] == "\"".to_string() {
-                req_len = body.len()-2;
-                req_body = body[1..body.len()-1].to_string();
+            if body.starts_with('"') && body.len() >= 2 {
+                req_body = body[1..body.len() - 1].to_string();
             } else {
-                req_len = body.len();
                 req_body = body.to_string();
             }
             if path == "/bulk".to_string() {
@@ -226,7 +223,7 @@ impl Request {
                 content_type = HeaderValue::from_static("application/json");
             }
             req_headers.insert(CONTENT_TYPE, content_type);
-            req_headers.insert(CONTENT_LENGTH, req_len.into());
+            req_headers.insert(CONTENT_LENGTH, req_body.len().into());
             req_builder.body(req_body)
         } else {
             req_builder.body(String::new())
