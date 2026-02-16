@@ -1,17 +1,10 @@
 # Manticore Rust client
 
-❗ WARNING: this is a development version of the client. The latest release's readme is https://github.com/manticoresoftware/manticoresearch-rust/tree/2.0.0
 
 ## Requirements.
 
 Minimum Manticore Search version is >= 9.2.14 with HTTP protocol enabled.
 
-| **manticoresearch-rust*     | **Manticore Search**                | **Rust**       | **Compatibility**       |
-| --------------------------- | ----------------------------------- | -------------- | ------------------------|
-| 2.0.0-alpha                 | `dev` (latest development version)  | 1.80 or newer  | ✅ Fully Compatible     |
-| 2.0.0 or newer              | 17.5.1 or newer                     | 1.80 or newer  | ✅ Fully Compatible     |
-| 1.0.0 to 2.0.0              | 17.5.1 or newer                     | 1.80 or newer  | ⚠️ Partially Compatible |
-| 1.0.0 to 2.0.0              | 9.2.14 to 17.5.1                    | 1.80 or newer  | ✅ Fully Compatible     |
 
 ## Overview
 
