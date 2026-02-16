@@ -2,9 +2,6 @@ name: Publishing
 
 on: 
   push:
-    branches: 
-      - main
-
 
 jobs:
   test:
