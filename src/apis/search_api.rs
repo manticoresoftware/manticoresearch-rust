@@ -47,6 +47,7 @@ impl<C: Connect>SearchApi for SearchApiClient<C>
     #[allow(unused_mut)]
     fn autocomplete(&self, autocomplete_request: models::AutocompleteRequest) -> Pin<Box<dyn Future<Output = Result<Vec<serde_json::Value>, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/autocomplete".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(autocomplete_request);
 
@@ -56,6 +57,7 @@ impl<C: Connect>SearchApi for SearchApiClient<C>
     #[allow(unused_mut)]
     fn percolate(&self, table: &str, percolate_request: models::PercolateRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/pq/{table}/search".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_path_param("table".to_string(), table.to_string());
         req = req.with_body_param(percolate_request);
@@ -66,6 +68,7 @@ impl<C: Connect>SearchApi for SearchApiClient<C>
     #[allow(unused_mut)]
     fn search(&self, search_request: models::SearchRequest) -> Pin<Box<dyn Future<Output = Result<models::SearchResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/search".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(search_request);
 

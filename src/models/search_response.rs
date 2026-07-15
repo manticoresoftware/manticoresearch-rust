@@ -11,7 +11,7 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// SearchResponse : Response object containing the results of a search request
+/// SearchResponse : Response object containing search results. For conversational search requests that include a `chat` object, the optional chat fields below are also populated. For conversational search response fields see [Conversational search](https://manual.manticoresearch.com/Searching/Conversational_search#Response) 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SearchResponse {
     /// Time taken to execute the search
@@ -20,9 +20,9 @@ pub struct SearchResponse {
     /// Indicates whether the search operation timed out
     #[serde(rename = "timed_out", skip_serializing_if = "Option::is_none")]
     pub timed_out: Option<bool>,
-    /// Aggregated search results grouped by the specified criteria
+    /// Aggregated search results grouped by the specified criteria. Each named aggregation typically contains a `buckets` array (or keyed map) of bucket objects with `key`, `doc_count`, and optional `status`. 
     #[serde(rename = "aggregations", skip_serializing_if = "Option::is_none")]
-    pub aggregations: Option<serde_json::Value>,
+    pub aggregations: Option<std::collections::HashMap<String, models::AggBucketsResult>>,
     #[serde(rename = "hits", skip_serializing_if = "Option::is_none")]
     pub hits: Option<Box<models::SearchResponseHits>>,
     /// Profile information about the search execution, if profiling is enabled
@@ -34,10 +34,25 @@ pub struct SearchResponse {
     /// Warnings encountered during the search operation
     #[serde(rename = "warning", skip_serializing_if = "Option::is_none")]
     pub warning: Option<serde_json::Value>,
+    /// Existing or generated conversation id (conversational search)
+    #[serde(rename = "conversation_uuid", skip_serializing_if = "Option::is_none")]
+    pub conversation_uuid: Option<String>,
+    /// Original user query (conversational search)
+    #[serde(rename = "user_query", skip_serializing_if = "Option::is_none")]
+    pub user_query: Option<String>,
+    /// Standalone search query used for KNN retrieval (conversational search)
+    #[serde(rename = "search_query", skip_serializing_if = "Option::is_none")]
+    pub search_query: Option<String>,
+    /// LLM answer as generated (conversational search)
+    #[serde(rename = "response", skip_serializing_if = "Option::is_none")]
+    pub response: Option<String>,
+    /// JSON string containing retrieved source rows used as LLM context (conversational search). 
+    #[serde(rename = "sources", skip_serializing_if = "Option::is_none")]
+    pub sources: Option<String>,
 }
 
 impl SearchResponse {
-    /// Response object containing the results of a search request
+    /// Response object containing search results. For conversational search requests that include a `chat` object, the optional chat fields below are also populated. For conversational search response fields see [Conversational search](https://manual.manticoresearch.com/Searching/Conversational_search#Response) 
     pub fn new() -> SearchResponse {
         SearchResponse {
             took: None,
@@ -47,6 +62,11 @@ impl SearchResponse {
             profile: None,
             scroll: None,
             warning: None,
+            conversation_uuid: None,
+            user_query: None,
+            search_query: None,
+            response: None,
+            sources: None,
         }
     }
 }

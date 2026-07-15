@@ -56,7 +56,7 @@ async fn search_api_basic_requests() {
     options.insert("ranker".to_string(), serde_json::json!("bm25"));
 
     let search_request = SearchRequest {
-        table: "movies".to_string(),
+        table: Some("movies".to_string()),
         query: Some(Box::new(query)),
         highlight: Some(Box::new(highlight)),
         options: Some(serde_json::json!(options)),
@@ -67,8 +67,8 @@ async fn search_api_basic_requests() {
     let res = search_api.search(search_request).await;
     assert!(res.is_ok(), "Search failed: {:?}", res.err());
 
-    let result = res.unwrap();
-    println!("Search result: {:?}", result);
+    let search_response = res.unwrap();
+    println!("Search result: {:?}", search_response);
 
 }
 

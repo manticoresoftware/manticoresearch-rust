@@ -5,6 +5,7 @@ All URIs are relative to *http://127.0.0.1:9308*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**sql**](UtilsApi.md#sql) | **Post** /sql | Perform SQL requests
+[**token**](UtilsApi.md#token) | **Post** /token | Create or rotate a bearer token
 
 
 
@@ -29,12 +30,42 @@ Name | Type | Description  | Required | Notes
 
 ### Authorization
 
-No authorization required
+[basicAuth](../README.md#basicAuth), [bearerAuth](../README.md#bearerAuth)
 
 ### HTTP request headers
 
 - **Content-Type**: text/plain
 - **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## token
+
+> String token(body)
+Create or rotate a bearer token
+
+Create or rotate a bearer token for the authenticated HTTP user. Requires HTTP Basic authentication with a Manticore user name and password. The endpoint returns the raw token. Example:    ```   curl -u admin:password -X POST http://127.0.0.1:9308/token -d \"{}\"   ``` 
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**body** | **serde_json::Value** |  | [required] |
+
+### Return type
+
+**String**
+
+### Authorization
+
+[basicAuth](../README.md#basicAuth)
+
+### HTTP request headers
+
+- **Content-Type**: application/json
+- **Accept**: application/json, text/plain
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

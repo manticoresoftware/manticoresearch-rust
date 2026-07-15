@@ -18,8 +18,8 @@ pub struct AggDateHistogram {
     #[serde(rename = "field")]
     pub field: String,
     /// Interval of the histogram values
-    #[serde(rename = "interval")]
-    pub interval: i32,
+    #[serde(rename = "calendar_interval")]
+    pub calendar_interval: i32,
     /// Offset of the histogram values. Default value is 0.
     #[serde(rename = "offset", skip_serializing_if = "Option::is_none")]
     pub offset: Option<i32>,
@@ -30,10 +30,10 @@ pub struct AggDateHistogram {
 
 impl AggDateHistogram {
     /// Object to use histograms in aggregation, i.e., grouping search results by histogram values
-    pub fn new(field: String, interval: i32) -> AggDateHistogram {
+    pub fn new(field: String, calendar_interval: i32) -> AggDateHistogram {
         AggDateHistogram {
             field,
-            interval,
+            calendar_interval,
             offset: None,
             keyed: None,
         }

@@ -11,27 +11,21 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// Range : Filter helper object defining the 'range' condition
+/// Range : An aggregation range. 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Range {
-    #[serde(rename = "lt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub lt: Option<Option<serde_json::Value>>,
-    #[serde(rename = "lte", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub lte: Option<Option<serde_json::Value>>,
-    #[serde(rename = "gt", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub gt: Option<Option<serde_json::Value>>,
-    #[serde(rename = "gte", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub gte: Option<Option<serde_json::Value>>,
+    #[serde(rename = "from", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub from: Option<Option<serde_json::Value>>,
+    #[serde(rename = "to", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub to: Option<Option<serde_json::Value>>,
 }
 
 impl Range {
-    /// Filter helper object defining the 'range' condition
+    /// An aggregation range. 
     pub fn new() -> Range {
         Range {
-            lt: None,
-            lte: None,
-            gt: None,
-            gte: None,
+            from: None,
+            to: None,
         }
     }
 }

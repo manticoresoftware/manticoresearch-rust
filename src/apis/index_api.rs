@@ -50,6 +50,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn bulk(&self, body: &str) -> Pin<Box<dyn Future<Output = Result<models::BulkResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/bulk".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(body);
 
@@ -59,6 +60,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn delete(&self, delete_document_request: models::DeleteDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::DeleteResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/delete".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(delete_document_request);
 
@@ -68,6 +70,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn insert(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/insert".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(insert_document_request);
 
@@ -77,6 +80,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn partial_replace(&self, table: &str, id: u64, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/{table}/_update/{id}".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_path_param("table".to_string(), table.to_string());
         req = req.with_path_param("id".to_string(), id.to_string());
@@ -88,6 +92,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn replace(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/replace".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(insert_document_request);
 
@@ -97,6 +102,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     #[allow(unused_mut)]
     fn update(&self, update_document_request: models::UpdateDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/update".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         req = req.with_body_param(update_document_request);
 

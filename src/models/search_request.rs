@@ -11,12 +11,14 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// SearchRequest : Request object for search operation
+/// SearchRequest : Request object for search operation. Either `table` (regular search) or `chat` (conversational search) must be provided. 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct SearchRequest {
     /// The table to perform the search on
-    #[serde(rename = "table")]
-    pub table: String,
+    #[serde(rename = "table", skip_serializing_if = "Option::is_none")]
+    pub table: Option<String>,
+    #[serde(rename = "chat", skip_serializing_if = "Option::is_none")]
+    pub chat: Option<Box<models::Chat>>,
     #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
     pub query: Option<Box<models::SearchQuery>>,
     /// Join clause to combine search data from multiple tables
@@ -27,14 +29,22 @@ pub struct SearchRequest {
     /// Maximum number of results to return
     #[serde(rename = "limit", skip_serializing_if = "Option::is_none")]
     pub limit: Option<i32>,
+    /// K-nearest neighbor search settings. Pass a single `knn` object or an array of objects for multi-vector search. 
     #[serde(rename = "knn", skip_serializing_if = "Option::is_none")]
     pub knn: Option<Box<models::Knn>>,
+    #[serde(rename = "hybrid", skip_serializing_if = "Option::is_none")]
+    pub hybrid: Option<Box<models::Hybrid>>,
+    #[serde(rename = "facet_filter_mode", skip_serializing_if = "Option::is_none")]
+    pub facet_filter_mode: Option<models::FacetFilterMode>,
     /// Defines aggregation settings for grouping results
     #[serde(rename = "aggs", skip_serializing_if = "Option::is_none")]
     pub aggs: Option<std::collections::HashMap<String, models::Aggregation>>,
-    /// Expressions to calculate additional values for the result
+    /// Expressions to calculate additional values for the result. Simpler alternative to `script_fields`; expression names must be lowercase. 
     #[serde(rename = "expressions", skip_serializing_if = "Option::is_none")]
     pub expressions: Option<std::collections::HashMap<String, String>>,
+    /// Named expressions computed at search time. Each value defines an inline script whose result is stored under the field name. For more information see [Expressions](https://manual.manticoresearch.com/Searching/Expressions#script_fields) 
+    #[serde(rename = "script_fields", skip_serializing_if = "Option::is_none")]
+    pub script_fields: Option<std::collections::HashMap<String, models::ScriptField>>,
     /// Maximum number of matches allowed in the result
     #[serde(rename = "max_matches", skip_serializing_if = "Option::is_none")]
     pub max_matches: Option<i32>,
@@ -57,17 +67,21 @@ pub struct SearchRequest {
 }
 
 impl SearchRequest {
-    /// Request object for search operation
-    pub fn new(table: String) -> SearchRequest {
+    /// Request object for search operation. Either `table` (regular search) or `chat` (conversational search) must be provided. 
+    pub fn new() -> SearchRequest {
         SearchRequest {
-            table,
+            table: None,
+            chat: None,
             query: None,
             join: None,
             highlight: None,
             limit: None,
             knn: None,
+            hybrid: None,
+            facet_filter_mode: None,
             aggs: None,
             expressions: None,
+            script_fields: None,
             max_matches: None,
             offset: None,
             options: None,

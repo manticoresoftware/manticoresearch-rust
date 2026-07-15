@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::pin::Pin;
 
-use fancy_regex::Regex;
 use futures;
 use futures::Future;
 use futures::future::*;
@@ -144,18 +143,21 @@ impl Request {
             .uri(uri)
             .method(self.method);
 
-        // Detect the authorization type if it hasn't been set.
-        let auth = self.auth.unwrap_or_else(||
-            if conf.api_key.is_some() {
-                panic!("Cannot automatically set the API key from the configuration, it must be specified in the OpenAPI definition")
-            } else if conf.oauth_access_token.is_some() {
-                Auth::Oauth
-            } else if conf.basic_auth.is_some() {
-                Auth::Basic
-            } else {
-                Auth::None
-            }
-        );
+        // Prefer credentials present on Configuration over the single Auth value
+        // codegen attached (hyper emits Auth::Basic for http basic, but not Bearer).
+        let auth = if conf.basic_auth.is_some() {
+            Auth::Basic
+        } else if conf.oauth_access_token.is_some() {
+            Auth::Oauth
+        } else {
+            self.auth.unwrap_or_else(||
+                if conf.api_key.is_some() {
+                    panic!("Cannot automatically set the API key from the configuration, it must be specified in the OpenAPI definition")
+                } else {
+                    Auth::None
+                }
+            )
+        };
         match auth {
             Auth::ApiKey(apikey) => {
                 if let Some(ref key) = conf.api_key {
@@ -175,7 +177,7 @@ impl Request {
                     if let Some(ref pass) = auth_conf.1 {
                         text.push_str(&pass[..]);
                     }
-                    let encoded = base64::encode(&text);
+                    let encoded = format!("Basic {}", base64::encode(&text));
                     req_builder = req_builder.header(AUTHORIZATION, encoded);
                 }
             }
@@ -208,20 +210,22 @@ impl Request {
             }
             req_builder.body(enc.finish())
         } else if let Some(body) = self.serialized_body {
-            let mut req_body;
-            let content_type;
-            if body.starts_with('"') && body.len() >= 2 {
-                req_body = body[1..body.len() - 1].to_string();
-            } else {
-                req_body = body.to_string();
-            }
-            if path == "/bulk".to_string() {
-                content_type = HeaderValue::from_static("application/x-ndjson");
-                let re = Regex::new(r#"(?<!\\)\\\""#).unwrap();
-                req_body = re.replace_all(req_body.as_str(), "\"").to_string();
-            } else {
-                content_type = HeaderValue::from_static("application/json");
-            }
+            // String body params (e.g. /bulk NDJSON, /sql text) are JSON-encoded by
+            // with_body_param; decode back to the original bytes. Object/array bodies
+            // stay JSON as serialized.
+            let (content_type, req_body) = match serde_json::from_str::<String>(&body) {
+                Ok(decoded) => {
+                    let ct = if path == "/bulk".to_string() {
+                        "application/x-ndjson"
+                    } else if path == "/sql".to_string() {
+                        "text/plain"
+                    } else {
+                        "text/plain"
+                    };
+                    (HeaderValue::from_static(ct), decoded)
+                }
+                Err(_) => (HeaderValue::from_static("application/json"), body),
+            };
             req_headers.insert(CONTENT_TYPE, content_type);
             req_headers.insert(CONTENT_LENGTH, req_body.len().into());
             req_builder.body(req_body)

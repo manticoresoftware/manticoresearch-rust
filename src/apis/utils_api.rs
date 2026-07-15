@@ -38,6 +38,7 @@ impl<C: Connect> UtilsApiClient<C>
 
 pub trait UtilsApi: Send + Sync {
     fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<models::SqlResponse, Error>> + Send>>;
+    fn token(&self, body: serde_json::Value) -> Pin<Box<dyn Future<Output = Result<String, Error>> + Send>>;
 }
 
 impl<C: Connect>UtilsApi for UtilsApiClient<C>
@@ -45,6 +46,7 @@ impl<C: Connect>UtilsApi for UtilsApiClient<C>
     #[allow(unused_mut)]
     fn sql(&self, body: &str, raw_response: Option<bool>) -> Pin<Box<dyn Future<Output = Result<models::SqlResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/sql".to_string())
+            .with_auth(__internal_request::Auth::Basic)
         ;
         if let Some(ref s) = raw_response {
             let query_value = match serde_json::to_string(s) {
@@ -53,6 +55,16 @@ impl<C: Connect>UtilsApi for UtilsApiClient<C>
             };
             req = req.with_query_param("raw_response".to_string(), query_value);
         }
+        req = req.with_body_param(body);
+
+        req.execute(self.configuration.borrow())
+    }
+
+    #[allow(unused_mut)]
+    fn token(&self, body: serde_json::Value) -> Pin<Box<dyn Future<Output = Result<String, Error>> + Send>> {
+        let mut req = __internal_request::Request::new(hyper::Method::POST, "/token".to_string())
+            .with_auth(__internal_request::Auth::Basic)
+        ;
         req = req.with_body_param(body);
 
         req.execute(self.configuration.borrow())

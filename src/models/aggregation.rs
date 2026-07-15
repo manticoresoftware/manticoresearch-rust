@@ -21,6 +21,26 @@ pub struct Aggregation {
     pub composite: Option<Box<models::AggComposite>>,
     #[serde(rename = "histogram", skip_serializing_if = "Option::is_none")]
     pub histogram: Option<Box<models::AggHistogram>>,
+    #[serde(rename = "date_histogram", skip_serializing_if = "Option::is_none")]
+    pub date_histogram: Option<Box<models::AggDateHistogram>>,
+    #[serde(rename = "range", skip_serializing_if = "Option::is_none")]
+    pub range: Option<Box<models::AggRange>>,
+    #[serde(rename = "date_range", skip_serializing_if = "Option::is_none")]
+    pub date_range: Option<Box<models::AggRange>>,
+    #[serde(rename = "percentiles", skip_serializing_if = "Option::is_none")]
+    pub percentiles: Option<Box<models::AggPercentiles>>,
+    #[serde(rename = "percentile_ranks", skip_serializing_if = "Option::is_none")]
+    pub percentile_ranks: Option<Box<models::AggPercentileRanks>>,
+    #[serde(rename = "median_absolute_deviation", skip_serializing_if = "Option::is_none")]
+    pub median_absolute_deviation: Option<Box<models::AggMedianAbsoluteDeviation>>,
+    #[serde(rename = "min", skip_serializing_if = "Option::is_none")]
+    pub min: Option<Box<models::AggMetric>>,
+    #[serde(rename = "max", skip_serializing_if = "Option::is_none")]
+    pub max: Option<Box<models::AggMetric>>,
+    #[serde(rename = "sum", skip_serializing_if = "Option::is_none")]
+    pub sum: Option<Box<models::AggMetric>>,
+    #[serde(rename = "avg", skip_serializing_if = "Option::is_none")]
+    pub avg: Option<Box<models::AggMetric>>,
 }
 
 impl Aggregation {
@@ -30,6 +50,16 @@ impl Aggregation {
             sort: None,
             composite: None,
             histogram: None,
+            date_histogram: None,
+            range: None,
+            date_range: None,
+            percentiles: None,
+            percentile_ranks: None,
+            median_absolute_deviation: None,
+            min: None,
+            max: None,
+            sum: None,
+            avg: None,
         }
     }
 }
