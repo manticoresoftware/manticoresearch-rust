@@ -12,19 +12,16 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// DeleteDocumentRequest : Payload for delete request. Documents can be deleted either one by one by specifying the document id or by providing a query object. For more information see  [Delete API](https://manual.manticoresearch.com/Deleting_documents) 
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct DeleteDocumentRequest {
     /// Table name
-    #[serde(rename = "table")]
     pub table: String,
     /// Cluster name
-    #[serde(rename = "cluster", skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// The ID of document for deletion
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,
+    pub uuid: Option<String>,
     /// Defines the criteria to match documents for deletion
-    #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
     pub query: Option<serde_json::Value>,
 }
 
@@ -35,8 +32,57 @@ impl DeleteDocumentRequest {
             table,
             cluster: None,
             id: None,
+            uuid: None,
             query: None,
         }
     }
 }
 
+impl serde::Serialize for DeleteDocumentRequest {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        map.serialize_entry("table", &self.table)?;
+        if let Some(ref v) = self.cluster {
+            map.serialize_entry("cluster", v)?;
+        }
+        if let Some(ref v) = self.query {
+            map.serialize_entry("query", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.id.clone(), self.uuid.clone()) {
+            map.serialize_entry("id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for DeleteDocumentRequest {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "table", default)]
+            table: String,
+            #[serde(rename = "cluster", default)]
+            cluster: Option<String>,
+            #[serde(rename = "query", default)]
+            query: Option<serde_json::Value>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(DeleteDocumentRequest {
+            id: id,
+            uuid,
+            table: shadow.table,
+            cluster: shadow.cluster,
+            query: shadow.query,
+        })
+    }
+}

@@ -6,6 +6,22 @@ use manticoresearch::{
 };
 use std::collections::HashMap;
 
+#[test]
+fn document_id_serializes_and_deserializes_as_uuid() {
+    let mut request = InsertDocumentRequest::new(
+        "products".to_string(),
+        serde_json::json!({ "title": "test" }),
+    );
+    request.uuid = Some("550e8400-e29b-41d4-a716-446655440000".to_string());
+
+    let serialized = serde_json::to_value(&request).unwrap();
+    assert_eq!(serialized["id"], "550e8400-e29b-41d4-a716-446655440000");
+
+    let decoded: InsertDocumentRequest = serde_json::from_value(serialized).unwrap();
+    assert_eq!(decoded.id, None);
+    assert_eq!(decoded.uuid.as_deref(), Some("550e8400-e29b-41d4-a716-446655440000"));
+}
+
 #[tokio::test]
 async fn index_api_basic_requests() {
     let api_config = Arc::new(Configuration::new());

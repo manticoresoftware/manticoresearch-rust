@@ -12,19 +12,16 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// UpdateResponse : Success response returned after updating one or more documents
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct UpdateResponse {
     /// Name of the document table
-    #[serde(rename = "table", skip_serializing_if = "Option::is_none")]
     pub table: Option<String>,
     /// Number of documents updated
-    #[serde(rename = "updated", skip_serializing_if = "Option::is_none")]
     pub updated: Option<i32>,
     /// Document ID
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,
+    pub uuid: Option<String>,
     /// Result of the update operation, typically 'updated'
-    #[serde(rename = "result", skip_serializing_if = "Option::is_none")]
     pub result: Option<String>,
 }
 
@@ -35,8 +32,59 @@ impl UpdateResponse {
             table: None,
             updated: None,
             id: None,
+            uuid: None,
             result: None,
         }
     }
 }
 
+impl serde::Serialize for UpdateResponse {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        if let Some(ref v) = self.table {
+            map.serialize_entry("table", v)?;
+        }
+        if let Some(ref v) = self.updated {
+            map.serialize_entry("updated", v)?;
+        }
+        if let Some(ref v) = self.result {
+            map.serialize_entry("result", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.id.clone(), self.uuid.clone()) {
+            map.serialize_entry("id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for UpdateResponse {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "table", default)]
+            table: Option<String>,
+            #[serde(rename = "updated", default)]
+            updated: Option<i32>,
+            #[serde(rename = "result", default)]
+            result: Option<String>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(UpdateResponse {
+            id: id,
+            uuid,
+            table: shadow.table,
+            updated: shadow.updated,
+            result: shadow.result,
+        })
+    }
+}

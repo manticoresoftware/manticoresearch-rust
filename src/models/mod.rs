@@ -1,3 +1,4 @@
+pub mod document_id;
 pub mod agg_bucket;
 pub use self::agg_bucket::AggBucket;
 pub mod agg_buckets_result;

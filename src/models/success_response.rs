@@ -12,25 +12,20 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// SuccessResponse : Response object indicating the success of an operation, such as inserting or updating a document
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct SuccessResponse {
     /// Name of the document table
-    #[serde(rename = "table", skip_serializing_if = "Option::is_none")]
     pub table: Option<String>,
     /// ID of the document affected by the request operation
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,
+    pub uuid: Option<String>,
     /// Indicates whether the document was created as a result of the operation
-    #[serde(rename = "created", skip_serializing_if = "Option::is_none")]
     pub created: Option<bool>,
     /// Result of the operation, typically 'created', 'updated', or 'deleted'
-    #[serde(rename = "result", skip_serializing_if = "Option::is_none")]
     pub result: Option<String>,
     /// Indicates whether the document was found in the table
-    #[serde(rename = "found", skip_serializing_if = "Option::is_none")]
     pub found: Option<bool>,
     /// HTTP status code representing the result of the operation
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<i32>,
 }
 
@@ -40,6 +35,7 @@ impl SuccessResponse {
         SuccessResponse {
             table: None,
             id: None,
+            uuid: None,
             created: None,
             result: None,
             found: None,
@@ -48,3 +44,65 @@ impl SuccessResponse {
     }
 }
 
+impl serde::Serialize for SuccessResponse {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        if let Some(ref v) = self.table {
+            map.serialize_entry("table", v)?;
+        }
+        if let Some(ref v) = self.created {
+            map.serialize_entry("created", v)?;
+        }
+        if let Some(ref v) = self.result {
+            map.serialize_entry("result", v)?;
+        }
+        if let Some(ref v) = self.found {
+            map.serialize_entry("found", v)?;
+        }
+        if let Some(ref v) = self.status {
+            map.serialize_entry("status", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.id.clone(), self.uuid.clone()) {
+            map.serialize_entry("id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for SuccessResponse {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "table", default)]
+            table: Option<String>,
+            #[serde(rename = "created", default)]
+            created: Option<bool>,
+            #[serde(rename = "result", default)]
+            result: Option<String>,
+            #[serde(rename = "found", default)]
+            found: Option<bool>,
+            #[serde(rename = "status", default)]
+            status: Option<i32>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(SuccessResponse {
+            id: id,
+            uuid,
+            table: shadow.table,
+            created: shadow.created,
+            result: shadow.result,
+            found: shadow.found,
+            status: shadow.status,
+        })
+    }
+}

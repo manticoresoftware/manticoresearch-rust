@@ -5,10 +5,10 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **field** | **String** | Field to perform the k-nearest neighbor search on | 
-**k** | **i32** | The number of nearest neighbors to return | 
+**k** | Option<**i32**> | Deprecated. Use the top-level `limit` parameter instead. | [optional]
 **query** | Option<[**models::KnnQuery**](knn_query.md)> |  | [optional]
 **query_vector** | Option<**Vec<f64>**> | The vector used as input for the KNN search | [optional]
-**doc_id** | Option<**i32**> | The docuemnt ID used as input for the KNN search | [optional]
+**doc_id** | Option<**i32**> | The document ID used as input for the KNN search | [optional]
 **ef** | Option<**i32**> | Optional parameter controlling the accuracy of the search | [optional]
 **rescore** | Option<**bool**> | Optional parameter enabling KNN rescoring (disabled by default) | [optional]
 **oversampling** | Option<**f64**> | Optional parameter setting a factor by which k is multiplied when executing the KNN search | [optional]

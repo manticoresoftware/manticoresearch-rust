@@ -12,22 +12,18 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// DeleteResponse : Response object for successful delete request
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct DeleteResponse {
     /// The name of the table from which the document was deleted
-    #[serde(rename = "table", skip_serializing_if = "Option::is_none")]
     pub table: Option<String>,
     /// Number of documents deleted
-    #[serde(rename = "deleted", skip_serializing_if = "Option::is_none")]
     pub deleted: Option<i32>,
-    /// The ID of the deleted document. If multiple documents are deleted, the ID of the first deleted document is returned
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
+    /// The ID of the deleted document. If multiple documents are deleted, the ID of the first deleted document is returned 
     pub id: Option<u64>,
+    pub uuid: Option<String>,
     /// Indicates whether any documents to be deleted were found
-    #[serde(rename = "found", skip_serializing_if = "Option::is_none")]
     pub found: Option<bool>,
     /// Result of the delete operation, typically 'deleted'
-    #[serde(rename = "result", skip_serializing_if = "Option::is_none")]
     pub result: Option<String>,
 }
 
@@ -38,9 +34,66 @@ impl DeleteResponse {
             table: None,
             deleted: None,
             id: None,
+            uuid: None,
             found: None,
             result: None,
         }
     }
 }
 
+impl serde::Serialize for DeleteResponse {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        if let Some(ref v) = self.table {
+            map.serialize_entry("table", v)?;
+        }
+        if let Some(ref v) = self.deleted {
+            map.serialize_entry("deleted", v)?;
+        }
+        if let Some(ref v) = self.found {
+            map.serialize_entry("found", v)?;
+        }
+        if let Some(ref v) = self.result {
+            map.serialize_entry("result", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.id.clone(), self.uuid.clone()) {
+            map.serialize_entry("id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for DeleteResponse {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "table", default)]
+            table: Option<String>,
+            #[serde(rename = "deleted", default)]
+            deleted: Option<i32>,
+            #[serde(rename = "found", default)]
+            found: Option<bool>,
+            #[serde(rename = "result", default)]
+            result: Option<String>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(DeleteResponse {
+            id: id,
+            uuid,
+            table: shadow.table,
+            deleted: shadow.deleted,
+            found: shadow.found,
+            result: shadow.result,
+        })
+    }
+}

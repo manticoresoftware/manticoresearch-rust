@@ -40,7 +40,8 @@ pub trait IndexApi: Send + Sync {
     fn bulk(&self, body: &str) -> Pin<Box<dyn Future<Output = Result<models::BulkResponse, Error>> + Send>>;
     fn delete(&self, delete_document_request: models::DeleteDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::DeleteResponse, Error>> + Send>>;
     fn insert(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>>;
-    fn partial_replace(&self, table: &str, id: u64, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
+    fn partial_replace(&self, table: &str, id: &str, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
+    fn partial_replace_uuid(&self, table: &str, uuid: &str, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
     fn replace(&self, insert_document_request: models::InsertDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::SuccessResponse, Error>> + Send>>;
     fn update(&self, update_document_request: models::UpdateDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>>;
 }
@@ -78,7 +79,7 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
     }
 
     #[allow(unused_mut)]
-    fn partial_replace(&self, table: &str, id: u64, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
+    fn partial_replace(&self, table: &str, id: &str, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
         let mut req = __internal_request::Request::new(hyper::Method::POST, "/{table}/_update/{id}".to_string())
             .with_auth(__internal_request::Auth::Basic)
         ;
@@ -87,6 +88,10 @@ impl<C: Connect>IndexApi for IndexApiClient<C>
         req = req.with_body_param(replace_document_request);
 
         req.execute(self.configuration.borrow())
+    }
+
+    fn partial_replace_uuid(&self, table: &str, uuid: &str, replace_document_request: models::ReplaceDocumentRequest) -> Pin<Box<dyn Future<Output = Result<models::UpdateResponse, Error>> + Send>> {
+        self.partial_replace(table, uuid, replace_document_request)
     }
 
     #[allow(unused_mut)]

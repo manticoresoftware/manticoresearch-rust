@@ -12,31 +12,24 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// HitsHits : Search hit representing a matched document
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct HitsHits {
     /// The ID of the matched document
-    #[serde(rename = "_id", skip_serializing_if = "Option::is_none")]
     pub _id: Option<u64>,
+    pub uuid: Option<String>,
     /// The score of the matched document
-    #[serde(rename = "_score", skip_serializing_if = "Option::is_none")]
     pub _score: Option<i32>,
     /// The source data of the matched document
-    #[serde(rename = "_source", skip_serializing_if = "Option::is_none")]
     pub _source: Option<serde_json::Value>,
     /// The knn distance of the matched document returned for knn queries
-    #[serde(rename = "_knn_dist", skip_serializing_if = "Option::is_none")]
     pub _knn_dist: Option<f64>,
     /// The highlighting-related data of the matched document
-    #[serde(rename = "highlight", skip_serializing_if = "Option::is_none")]
     pub highlight: Option<serde_json::Value>,
     /// The table name of the matched document returned for percolate queries
-    #[serde(rename = "table", skip_serializing_if = "Option::is_none")]
     pub table: Option<String>,
     /// The type of the matched document returned for percolate queries
-    #[serde(rename = "_type:", skip_serializing_if = "Option::is_none")]
     pub _type_colon: Option<String>,
     /// The percolate-related fields of the matched document returned for percolate queries
-    #[serde(rename = "fields", skip_serializing_if = "Option::is_none")]
     pub fields: Option<serde_json::Value>,
 }
 
@@ -45,6 +38,7 @@ impl HitsHits {
     pub fn new() -> HitsHits {
         HitsHits {
             _id: None,
+            uuid: None,
             _score: None,
             _source: None,
             _knn_dist: None,
@@ -56,3 +50,77 @@ impl HitsHits {
     }
 }
 
+impl serde::Serialize for HitsHits {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        if let Some(ref v) = self._score {
+            map.serialize_entry("_score", v)?;
+        }
+        if let Some(ref v) = self._source {
+            map.serialize_entry("_source", v)?;
+        }
+        if let Some(ref v) = self._knn_dist {
+            map.serialize_entry("_knn_dist", v)?;
+        }
+        if let Some(ref v) = self.highlight {
+            map.serialize_entry("highlight", v)?;
+        }
+        if let Some(ref v) = self.table {
+            map.serialize_entry("table", v)?;
+        }
+        if let Some(ref v) = self._type_colon {
+            map.serialize_entry("_type:", v)?;
+        }
+        if let Some(ref v) = self.fields {
+            map.serialize_entry("fields", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self._id.clone(), self.uuid.clone()) {
+            map.serialize_entry("_id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for HitsHits {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("_id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "_score", default)]
+            _score: Option<i32>,
+            #[serde(rename = "_source", default)]
+            _source: Option<serde_json::Value>,
+            #[serde(rename = "_knn_dist", default)]
+            _knn_dist: Option<f64>,
+            #[serde(rename = "highlight", default)]
+            highlight: Option<serde_json::Value>,
+            #[serde(rename = "table", default)]
+            table: Option<String>,
+            #[serde(rename = "_type:", default)]
+            _type_colon: Option<String>,
+            #[serde(rename = "fields", default)]
+            fields: Option<serde_json::Value>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(HitsHits {
+            _id: id,
+            uuid,
+            _score: shadow._score,
+            _source: shadow._source,
+            _knn_dist: shadow._knn_dist,
+            highlight: shadow.highlight,
+            table: shadow.table,
+            _type_colon: shadow._type_colon,
+            fields: shadow.fields,
+        })
+    }
+}

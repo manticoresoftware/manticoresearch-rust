@@ -12,21 +12,17 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// UpdateDocumentRequest : Payload for updating a document or multiple documents in a table
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct UpdateDocumentRequest {
     /// Name of the document table
-    #[serde(rename = "table")]
     pub table: String,
     /// Name of the document cluster
-    #[serde(rename = "cluster", skip_serializing_if = "Option::is_none")]
     pub cluster: Option<String>,
     /// Object containing the document fields to update
-    #[serde(rename = "doc")]
     pub doc: serde_json::Value,
     /// Document ID
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
     pub id: Option<u64>,
-    #[serde(rename = "query", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub uuid: Option<String>,
     pub query: Option<Option<Box<models::QueryFilter>>>,
 }
 
@@ -38,8 +34,61 @@ impl UpdateDocumentRequest {
             cluster: None,
             doc,
             id: None,
+            uuid: None,
             query: None,
         }
     }
 }
 
+impl serde::Serialize for UpdateDocumentRequest {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        map.serialize_entry("table", &self.table)?;
+        if let Some(ref v) = self.cluster {
+            map.serialize_entry("cluster", v)?;
+        }
+        map.serialize_entry("doc", &self.doc)?;
+        if let Some(ref v) = self.query {
+            map.serialize_entry("query", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.id.clone(), self.uuid.clone()) {
+            map.serialize_entry("id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for UpdateDocumentRequest {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "table", default)]
+            table: String,
+            #[serde(rename = "cluster", default)]
+            cluster: Option<String>,
+            #[serde(rename = "doc", default)]
+            doc: serde_json::Value,
+            #[serde(rename = "query", default)]
+            query: Option<Option<Box<models::QueryFilter>>>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(UpdateDocumentRequest {
+            id: id,
+            uuid,
+            table: shadow.table,
+            cluster: shadow.cluster,
+            doc: shadow.doc,
+            query: shadow.query,
+        })
+    }
+}

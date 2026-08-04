@@ -12,44 +12,37 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 /// Knn : Object representing a k-nearest neighbor search query
-#[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
+#[derive(Clone, Default, Debug, PartialEq)]
 pub struct Knn {
     /// Field to perform the k-nearest neighbor search on
-    #[serde(rename = "field")]
     pub field: String,
-    /// The number of nearest neighbors to return
-    #[serde(rename = "k")]
-    pub k: i32,
-    #[serde(rename = "query", skip_serializing_if = "Option::is_none")]
+    /// Deprecated. Use the top-level `limit` parameter instead.
+    pub k: Option<i32>,
     pub query: Option<Box<models::KnnQuery>>,
     /// The vector used as input for the KNN search
-    #[serde(rename = "query_vector", skip_serializing_if = "Option::is_none")]
     pub query_vector: Option<Vec<f64>>,
-    /// The docuemnt ID used as input for the KNN search
-    #[serde(rename = "doc_id", skip_serializing_if = "Option::is_none")]
+    /// The document ID used as input for the KNN search
     pub doc_id: Option<u64>,
+    pub uuid: Option<String>,
     /// Optional parameter controlling the accuracy of the search
-    #[serde(rename = "ef", skip_serializing_if = "Option::is_none")]
     pub ef: Option<i32>,
     /// Optional parameter enabling KNN rescoring (disabled by default)
-    #[serde(rename = "rescore", skip_serializing_if = "Option::is_none")]
     pub rescore: Option<bool>,
     /// Optional parameter setting a factor by which k is multiplied when executing the KNN search
-    #[serde(rename = "oversampling", skip_serializing_if = "Option::is_none")]
     pub oversampling: Option<f64>,
-    #[serde(rename = "filter", skip_serializing_if = "Option::is_none")]
     pub filter: Option<Box<models::QueryFilter>>,
 }
 
 impl Knn {
     /// Object representing a k-nearest neighbor search query
-    pub fn new(field: String, k: i32) -> Knn {
+    pub fn new(field: String) -> Knn {
         Knn {
             field,
-            k,
+            k: None,
             query: None,
             query_vector: None,
             doc_id: None,
+            uuid: None,
             ef: None,
             rescore: None,
             oversampling: None,
@@ -58,3 +51,81 @@ impl Knn {
     }
 }
 
+impl serde::Serialize for Knn {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeMap;
+        let mut map = serializer.serialize_map(None)?;
+        map.serialize_entry("field", &self.field)?;
+        if let Some(ref v) = self.k {
+            map.serialize_entry("k", v)?;
+        }
+        if let Some(ref v) = self.query {
+            map.serialize_entry("query", v)?;
+        }
+        if let Some(ref v) = self.query_vector {
+            map.serialize_entry("query_vector", v)?;
+        }
+        if let Some(ref v) = self.ef {
+            map.serialize_entry("ef", v)?;
+        }
+        if let Some(ref v) = self.rescore {
+            map.serialize_entry("rescore", v)?;
+        }
+        if let Some(ref v) = self.oversampling {
+            map.serialize_entry("oversampling", v)?;
+        }
+        if let Some(ref v) = self.filter {
+            map.serialize_entry("filter", v)?;
+        }
+        if let Some(w) = crate::models::document_id::WireDocumentId::merge(self.doc_id.clone(), self.uuid.clone()) {
+            map.serialize_entry("doc_id", &w)?;
+        }
+        map.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Knn {
+    fn deserialize<D: serde::Deserializer<'de>>(deserializer: D) -> Result<Self, D::Error> {
+        let mut value = serde_json::Value::deserialize(deserializer)?;
+        let obj = value.as_object_mut().ok_or_else(|| serde::de::Error::custom("expected object"))?;
+        let (id, uuid) = match obj.remove("doc_id") {
+            None => (None, None),
+            Some(serde_json::Value::Null) => (None, None),
+            Some(serde_json::Value::Number(n)) => (n.as_u64(), None),
+            Some(serde_json::Value::String(s)) => (None, Some(s)),
+            Some(other) => return Err(serde::de::Error::custom(format!("invalid id: {other}"))),
+        };
+        #[derive(serde::Deserialize)]
+        struct Shadow {
+            #[serde(rename = "field", default)]
+            field: String,
+            #[serde(rename = "k", default)]
+            k: Option<i32>,
+            #[serde(rename = "query", default)]
+            query: Option<Box<models::KnnQuery>>,
+            #[serde(rename = "query_vector", default)]
+            query_vector: Option<Vec<f64>>,
+            #[serde(rename = "ef", default)]
+            ef: Option<i32>,
+            #[serde(rename = "rescore", default)]
+            rescore: Option<bool>,
+            #[serde(rename = "oversampling", default)]
+            oversampling: Option<f64>,
+            #[serde(rename = "filter", default)]
+            filter: Option<Box<models::QueryFilter>>,
+        }
+        let shadow: Shadow = serde_json::from_value(serde_json::Value::Object(obj.clone())).map_err(serde::de::Error::custom)?;
+        Ok(Knn {
+            doc_id: id,
+            uuid,
+            field: shadow.field,
+            k: shadow.k,
+            query: shadow.query,
+            query_vector: shadow.query_vector,
+            ef: shadow.ef,
+            rescore: shadow.rescore,
+            oversampling: shadow.oversampling,
+            filter: shadow.filter,
+        })
+    }
+}

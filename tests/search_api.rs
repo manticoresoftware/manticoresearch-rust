@@ -18,6 +18,8 @@ async fn search_api_basic_requests() {
     // Drop table if it exists
     let res = utils_api.sql("DROP TABLE IF EXISTS movies", Some(true)).await;
     assert!(res.is_ok(), "Failed to drop table: {:?}", res.err());
+    let res = utils_api.sql("DROP TABLE IF EXISTS movies_uuid", Some(true)).await;
+    assert!(res.is_ok(), "Failed to drop UUID table: {:?}", res.err());
 
     // Create table
     let res = utils_api
@@ -27,12 +29,17 @@ async fn search_api_basic_requests() {
         )
         .await;
     assert!(res.is_ok(), "Failed to create table: {:?}", res.err());
+    let res = utils_api
+        .sql("CREATE TABLE movies_uuid (id uuid, title text)", Some(true))
+        .await;
+    assert!(res.is_ok(), "Failed to create UUID table: {:?}", res.err());
 
     // Bulk insert documents
     let bulk_body = r#"{"insert": {"table" : "movies", "id" : 1, "doc" : {"title" : "Star Trek 2: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2002, "rating": 6.4, "cat": "R", "code": [1,2,3], "type_vector": [0.2, 1.4, -2.3]}}}
 {"insert": {"table" : "movies", "id" : 2, "doc" : {"title" : "Star Trek 1: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2001, "rating": 6.5, "cat": "PG-13", "code": [1,12,3], "type_vector": [0.8, 0.4, 1.3]}}}
 {"insert": {"table" : "movies", "id" : 3, "doc" : {"title" : "Star Trek 3: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2003, "rating": 6.6, "cat": "R", "code": [11,2,3], "type_vector": [1.5, -1.0, 1.6]}}}
 {"insert": {"table" : "movies", "id" : 4, "doc" : {"title" : "Star Trek 4: Nemesis", "plot": "The Enterprise is diverted to the Romulan homeworld Romulus, supposedly because they want to negotiate a peace treaty. Captain Picard and his crew discover a serious threat to the Federation once Praetor Shinzon plans to attack Earth.", "_year": 2003, "rating": 6.0, "cat": "R", "code": [1,2,4], "type_vector": [0.4, 2.4, 0.9]}}}
+{"insert": {"table" : "movies_uuid", "id" : "550e8400-e29b-41d4-a716-446655440000", "doc" : {"title" : "UUID movie"}}}
 "#;
 
     let res = index_api.bulk(bulk_body).await;
@@ -69,6 +76,15 @@ async fn search_api_basic_requests() {
 
     let search_response = res.unwrap();
     println!("Search result: {:?}", search_response);
+    assert_eq!(search_response.hits.unwrap().hits.unwrap()[0]._id, Some(1));
+
+    let uuid_response = search_api.search(SearchRequest {
+        table: Some("movies_uuid".to_string()),
+        ..Default::default()
+    }).await.unwrap();
+    let uuid_hit = &uuid_response.hits.unwrap().hits.unwrap()[0];
+    assert_eq!(uuid_hit._id, None);
+    assert_eq!(uuid_hit.uuid.as_deref(), Some("550e8400-e29b-41d4-a716-446655440000"));
 
 }
 

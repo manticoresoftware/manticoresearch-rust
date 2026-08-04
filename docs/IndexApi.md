@@ -8,6 +8,7 @@ Method | HTTP request | Description
 [**delete**](IndexApi.md#delete) | **Post** /delete | Delete a document in a table
 [**insert**](IndexApi.md#insert) | **Post** /insert | Create a new document in a table
 [**partial_replace**](IndexApi.md#partial_replace) | **Post** /{table}/_update/{id} | Partially replaces a document in a table
+[**partial_replace_uuid**](IndexApi.md#partial_replace_uuid) | **Post** /{table}/_update/{id} | Partially replaces a document in a table by UUID
 [**replace**](IndexApi.md#replace) | **Post** /replace | Replace new document in a table
 [**update**](IndexApi.md#update) | **Post** /update | Update a document in a table
 
@@ -116,7 +117,7 @@ Partially replaces a document with given id in a table Responds with an object o
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
 **table** | **String** | Name of the percolate table | [required] |
-**id** | **i32** | Id of the document to replace | [required] |
+**id** | **String** | Id of the document to replace | [required] |
 **replace_document_request** | [**ReplaceDocumentRequest**](ReplaceDocumentRequest.md) |  | [required] |
 
 ### Return type
@@ -133,6 +134,34 @@ Name | Type | Description  | Required | Notes
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## partial_replace_uuid
+
+> models::UpdateResponse partial_replace_uuid(table, uuid, replace_document_request)
+
+Partially replaces a document in a table by UUID string id (tables created with `id uuid`). Alias of `partial_replace` with a string path id; prefer this helper for UUID tables.
+
+### Parameters
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**table** | **str** | Name of the table | [required] |
+**uuid** | **str** | UUID of the document to replace | [required] |
+**replace_document_request** | [**ReplaceDocumentRequest**](ReplaceDocumentRequest.md) |  | [required] |
+
+### Return type
+
+[**models::UpdateResponse**](UpdateResponse.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 
 ## replace
